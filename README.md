@@ -1,9 +1,9 @@
-![SurveyKit](https://github.com/user-attachments/assets/cba9fc77-c42c-4c9e-96c9-de7c6dabb2dd)
+![SwiftUI-Surveys](https://github.com/user-attachments/assets/cba9fc77-c42c-4c9e-96c9-de7c6dabb2dd)
 
-# SurveyKit
+# SwiftUI-Surveys
 
 A Swift package that provides an elegant and customizable survey interface for iOS applications using SwiftUI. <br>
-SurveyKit makes it easy to create professional-looking surveys with a modern design and smooth user experience.
+SwiftUI-Surveys makes it easy to create professional-looking surveys with a modern design and smooth user experience.
 
 ## Features
 
@@ -25,10 +25,10 @@ SurveyKit makes it easy to create professional-looking surveys with a modern des
 
 ### Swift Package Manager
 
-Add SurveyKit to your project through Xcode:
+Add SwiftUI-Surveys to your project through Xcode:
 
 1. File > Add Packages
-2. Enter package URL: ```https://github.com/Sedlacek-Solutions/SurveyKit.git```
+2. Enter package URL: ```https://github.com/Sedlacek-Solutions/SwiftUI-Surveys.git```
 3. Select version requirements
 4. Click Add Package
 
@@ -54,7 +54,7 @@ let questions = [
 ### Basic Implementation
 
 ```swift
-import SurveyKit
+import Surveys
 import SwiftUI
 
 struct ContentView: View {
@@ -80,7 +80,7 @@ struct ContentView: View {
 ### Skip Button Example
 
 ```swift
-import SurveyKit
+import Surveys
 import SwiftUI
 
 @MainActor
