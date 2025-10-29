@@ -4,17 +4,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "SurveyKit",
+    name: "SwiftUISurveys",
     defaultLocalization: "en",
     platforms: [.iOS(.v17), .macOS(.v14)],
     products: [
         .library(
-            name: "SurveyKit",
-            targets: ["SurveyKit"]),
+            name: "Surveys",
+            targets: ["Surveys"]),
     ],
     targets: [
         .target(
-            name: "SurveyKit"),
+            name: "Surveys"),
 
     ]
 )
