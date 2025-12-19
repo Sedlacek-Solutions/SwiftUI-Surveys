@@ -6,6 +6,7 @@
 //
 
 extension [SurveyQuestion] {
+    /// Sample questions for previews and demos.
     public static func mock() -> Self {
         [
             .init(

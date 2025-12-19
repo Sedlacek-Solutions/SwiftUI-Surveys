@@ -6,7 +6,8 @@
 
 import SwiftUI
 
-public enum SFSymbol: String, Hashable {
+/// SF Symbol names used by the library.
+enum SFSymbol: String, Hashable {
     case checkmarkCircleFill = "checkmark.circle.fill"
     case circle
 }
