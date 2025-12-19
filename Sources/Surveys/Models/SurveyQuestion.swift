@@ -27,47 +27,58 @@ extension [SurveyQuestion] {
     public static func mock() -> Self {
         [
             .init(
-                title: "How satisfied are you with our service?",
+                title: "What best describes you?",
                 answers: [
-                    .init(title: "Very satisfied", systemImage: "hand.thumbsup"),
-                    .init(title: "Satisfied", systemImage: "hand.thumbsup"),
-                    .init(title: "Neutral", systemImage: "hand.raised"),
-                    .init(title: "Dissatisfied", systemImage: "hand.thumbsdown"),
-                    .init(title: "Very dissatisfied", systemImage: "hand.thumbsdown.fill")
+                    .init(title: "Learning & exploring", systemImage: "graduationcap"),
+                    .init(title: "Solo founder", systemImage: "person"),
+                    .init(title: "Small team", systemImage: "person.2"),
+                    .init(title: "Startup", systemImage: "person.3"),
+                    .init(title: "Agency / Studio", systemImage: "briefcase"),
+                    .init(title: "Enterprise", systemImage: "building.columns")
                 ]
             ),
             .init(
-                title: "Which features do you use most often?",
+                title: "How many apps do you manage?",
                 answers: [
-                    .init(title: "Messaging", systemImage: "message"),
-                    .init(title: "File sharing", systemImage: "folder"),
-                    .init(title: "Video calls", systemImage: "video"),
-                    .init(title: "Calendar", systemImage: "calendar"),
-                    .init(title: "Task management", systemImage: "checklist")
+                    .init(title: "None yet", systemImage: "app.dashed"),
+                    .init(title: "One app", systemImage: "app"),
+                    .init(title: "A few apps (2–5)", systemImage: "square.stack.3d.up"),
+                    .init(title: "Several apps (6–20)", systemImage: "square.stack.3d.up.fill"),
+                    .init(title: "Many apps (20+)", systemImage: "building.2")
+                ]
+            ),
+            .init(
+                title: "How did you hear about us?",
+                answers: [
+                    .init(title: "App Store search", systemImage: "magnifyingglass"),
+                    .init(title: "Social media", systemImage: "bubble.left.and.bubble.right"),
+                    .init(title: "Friend or colleague", systemImage: "person.2"),
+                    .init(title: "Online article or blog", systemImage: "doc.text"),
+                    .init(title: "Podcast or video", systemImage: "play.rectangle")
+                ],
+                includeOther: true
+            ),
+            .init(
+                title: "What do you find most frustrating?",
+                answers: [
+                    .init(title: "Annoying sign-in", systemImage: "person.badge.key"),
+                    .init(title: "Hard to spot trends", systemImage: "waveform.path.ecg"),
+                    .init(title: "Unclear sentiment", systemImage: "face.smiling.inverse"),
+                    .init(title: "Confusing interface", systemImage: "rectangle.and.pencil.and.ellipsis"),
+                    .init(title: "Poor multi-platform support", systemImage: "macbook.and.iphone"),
+                    .init(title: "Nothing yet", systemImage: "questionmark.circle")
                 ],
                 isMultipleChoice: true
             ),
             .init(
-                title: "What is your preferred method of contact?",
+                title: "How often do you expect to use this app?",
                 answers: [
-                    .init(title: "Email", systemImage: "envelope"),
-                    .init(title: "Phone", systemImage: "phone"),
-                    .init(title: "Text message", systemImage: "text.bubble"),
-                    .init(title: "In-app notification", systemImage: "bell")
-                ],
-                includeOther: true
-            ),
-            .init(
-                title: "Which improvements would you like to see?",
-                answers: [
-                    .init(title: "Faster performance", systemImage: "speedometer"),
-                    .init(title: "Better UI/UX", systemImage: "paintbrush"),
-                    .init(title: "More features", systemImage: "sparkles"),
-                    .init(title: "Better integration", systemImage: "link"),
-                    .init(title: "Enhanced security", systemImage: "lock.shield")
-                ],
-                isMultipleChoice: true,
-                includeOther: true
+                    .init(title: "Multiple times per day", systemImage: "bolt"),
+                    .init(title: "Daily", systemImage: "sun.max"),
+                    .init(title: "Weekly", systemImage: "calendar"),
+                    .init(title: "Occasionally", systemImage: "clock"),
+                    .init(title: "Just trying it out", systemImage: "hand.thumbsup")
+                ]
             )
         ]
     }
