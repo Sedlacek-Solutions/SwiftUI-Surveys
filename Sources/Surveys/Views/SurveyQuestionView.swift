@@ -37,14 +37,14 @@ struct SurveyQuestionView {
     }
 
     private func otherTextChanged(oldText: String, newText: String) {
-        answers.remove(SurveyAnswer(title: oldText))
+        answers.remove(SurveyAnswer(title: LocalizedStringKey(oldText), titleString: oldText))
         guard !newText.isEmpty else { return }
 
         if !question.isMultipleChoice {
             answers.removeAll()
         }
 
-        answers.insert(SurveyAnswer(title: newText))
+        answers.insert(SurveyAnswer(title: LocalizedStringKey(newText), titleString: newText))
     }
 
     /// Resets the 'other' text field based on the current answers.
@@ -52,12 +52,12 @@ struct SurveyQuestionView {
     /// it will be set as the other text. Otherwise, other text will be cleared.
     private func resetOtherText() {
         guard let otherAnswer = answers.first(where: { answer in
-            !question.answers.contains(where: { $0.title == answer.title })
+            !question.answers.contains(answer)
         }) else {
             otherText = ""
             return
         }
-        otherText = otherAnswer.title
+        otherText = otherAnswer.titleString ?? ""
     }
 }
 
