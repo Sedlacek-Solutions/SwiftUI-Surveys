@@ -9,12 +9,12 @@ import SwiftUI
 @MainActor
 struct SurveyQuestionView {
     private let question: SurveyQuestion
-    @Binding private var answers: Set<String>
+    @Binding private var answers: Set<SurveyAnswer>
     @State private var otherText: String = ""
 
     init(
         question: SurveyQuestion,
-        answers: Binding<Set<String>>
+        answers: Binding<Set<SurveyAnswer>>
     ) {
         self.question = question
         self._answers = answers
@@ -23,7 +23,7 @@ struct SurveyQuestionView {
     /// Creates a binding for tracking the selection state of an answer.
     /// - Parameter answer: The answer string to create a binding for.
     /// - Returns: A binding that manages the selection state of the answer.
-    private func binding(for answer: String) -> Binding<Bool> {
+    private func binding(for answer: SurveyAnswer) -> Binding<Bool> {
         .init(
             get: { answers.contains(answer) },
             set: { _ in
@@ -37,14 +37,14 @@ struct SurveyQuestionView {
     }
 
     private func otherTextChanged(oldText: String, newText: String) {
-        answers.remove(oldText)
+        answers.remove(SurveyAnswer(title: oldText))
         guard !newText.isEmpty else { return }
 
         if !question.isMultipleChoice {
             answers.removeAll()
         }
 
-        answers.insert(newText)
+        answers.insert(SurveyAnswer(title: newText))
     }
 
     /// Resets the 'other' text field based on the current answers.
@@ -52,12 +52,12 @@ struct SurveyQuestionView {
     /// it will be set as the other text. Otherwise, other text will be cleared.
     private func resetOtherText() {
         guard let otherAnswer = answers.first(where: { answer in
-            !question.answers.contains(answer)
+            !question.answers.contains(where: { $0.title == answer.title })
         }) else {
             otherText = ""
             return
         }
-        otherText = otherAnswer
+        otherText = otherAnswer.title
     }
 }
 
@@ -103,9 +103,15 @@ extension SurveyQuestionView: View {
         .scrollIndicators(.hidden)
     }
 
-    private func answerToggle(answer: String) -> some View {
-        Toggle(answer, isOn: binding(for: answer))
-            .toggleStyle(.bezeledGray)
+    private func answerToggle(answer: SurveyAnswer) -> some View {
+        Toggle(isOn: binding(for: answer)) {
+            if let systemImage = answer.systemImage {
+                Label(answer.title, systemImage: systemImage)
+            } else {
+                Text(answer.title)
+            }
+        }
+        .toggleStyle(.labeledCheckmark)
     }
 
     @ViewBuilder

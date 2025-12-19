@@ -11,7 +11,7 @@ struct OtherTextField {
     @FocusState private var focusState: Bool
     @Binding private var text: String
 
-    var symbol: Image.SFSymbol {
+    var symbol: SFSymbol {
         text.isEmpty ? .circle : .checkmarkCircleFill
     }
 
@@ -30,28 +30,23 @@ struct OtherTextField {
     func onTapGesture() {
         focusState.toggle()
     }
-
-    func clearButtonAction() {
-        text = ""
-    }
 }
 
 extension OtherTextField: View {
     var body: some View {
         HStack(spacing: .zero) {
-            Image(symbol)
-                .foregroundStyle(.blue)
-
             TextField(.other, text: $text)
                 .focused($focusState)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 10)
 
-            clearButton
+            Image(symbol)
+                .foregroundStyle(.blue)
+                .font(.title3.weight(.semibold))
         }
         .padding(.horizontal)
         .frame(maxWidth: .infinity)
-        .frame(height: 50)
+        .frame(height: 48)
         .background(
             .background.secondary,
             in: .rect(cornerRadius: 10)
@@ -67,17 +62,6 @@ extension OtherTextField: View {
         )
         .contentShape(.rect)
         .onTapGesture(perform: onTapGesture)
-    }
-
-    @ViewBuilder
-    private var clearButton: some View {
-        if isShowingClearButton {
-            Button(action: clearButtonAction) {
-                Image(.xmarkCircleFill)
-                    .imageScale(.medium)
-                    .foregroundStyle(.secondary)
-            }
-        }
     }
 }
 

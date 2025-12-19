@@ -1,14 +1,14 @@
 //
-//  ToggleStyle+BezeledGray.swift
+//  ToggleStyle+LabeledCheckmark.swift
 //
 //  Created by James Sedlacek on 11/12/24.
 //
 
 import SwiftUI
 
-struct BezeledGrayToggleStyle: ToggleStyle {
+struct LabeledCheckmarkToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
-        let symbol: Image.SFSymbol = configuration.isOn ? .checkmarkCircleFill : .circle
+        let symbol: SFSymbol = configuration.isOn ? .checkmarkCircleFill : .circle
         let borderColor = configuration.isOn ? Color.blue : .clear
 
         Button(
@@ -17,14 +17,15 @@ struct BezeledGrayToggleStyle: ToggleStyle {
             },
             label: {
                 HStack {
+                    configuration.label
+                        .labelStyle(.coloredIcon)
+                    Spacer(minLength: .zero)
                     Image(symbol)
                         .foregroundStyle(.blue)
-                    configuration.label
-                    Spacer(minLength: .zero)
                 }
             }
         )
-        .buttonStyle(.bezeledGray)
+        .buttonStyle(.secondary(.rect(cornerRadius: 10)))
         .overlay(
             RoundedRectangle(cornerRadius: 10)
                 .strokeBorder(
@@ -35,9 +36,9 @@ struct BezeledGrayToggleStyle: ToggleStyle {
     }
 }
 
-extension ToggleStyle where Self == BezeledGrayToggleStyle {
+extension ToggleStyle where Self == LabeledCheckmarkToggleStyle {
     @MainActor @preconcurrency
-    static var bezeledGray: BezeledGrayToggleStyle { .init() }
+    static var labeledCheckmark: LabeledCheckmarkToggleStyle { .init() }
 }
 
 #Preview {
@@ -45,9 +46,10 @@ extension ToggleStyle where Self == BezeledGrayToggleStyle {
 
     VStack {
         Toggle(
-            "Hello World",
+            "Testing",
+            systemImage: "house",
             isOn: $isOn
         )
-        .toggleStyle(.bezeledGray)
+        .toggleStyle(.labeledCheckmark)
     }
 }

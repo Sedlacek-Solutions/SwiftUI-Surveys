@@ -1,12 +1,12 @@
 //
-//  ButtonStyle+Filled.swift
+//  ButtonStyle+Primary.swift
 //
 //  Created by James Sedlacek on 11/12/24.
 //
 
 import SwiftUI
 
-struct FilledButtonStyle: ButtonStyle {
+struct PrimaryButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
     private var backgroundColor: Color {
@@ -21,31 +21,31 @@ struct FilledButtonStyle: ButtonStyle {
         configuration.label
             .padding(.horizontal)
             .frame(maxWidth: .infinity)
-            .frame(height: 50)
+            .frame(height: 48)
             .background(
                 backgroundColor,
-                in: .rect(cornerRadius: 10)
+                in: .capsule
             )
             .foregroundStyle(foregroundColor)
-            .font(.body.weight(.medium))
+            .font(.title3.weight(.semibold))
             .opacity(configuration.isPressed ? 0.8 : 1)
             .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
             .sensoryFeedback(.selection, trigger: configuration.isPressed)
     }
 }
 
-extension ButtonStyle where Self == FilledButtonStyle {
+extension ButtonStyle where Self == PrimaryButtonStyle {
     @MainActor @preconcurrency
-    static var filled: FilledButtonStyle { .init() }
+    static var primary: PrimaryButtonStyle { .init() }
 }
 
 #Preview {
     VStack(spacing: 16) {
         Button("Hello, World!") {}
-            .buttonStyle(.filled)
+            .buttonStyle(.primary)
 
         Button("Hello, World!") {}
-            .buttonStyle(.filled)
+            .buttonStyle(.primary)
             .disabled(true)
     }
     .padding()

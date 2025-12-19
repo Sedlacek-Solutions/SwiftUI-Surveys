@@ -27,10 +27,10 @@ import SwiftUI
 @MainActor
 public struct SurveyFlow {
     private let questions: [SurveyQuestion]
-    private let onAnswer: (_ question: SurveyQuestion, _ answers: Set<String>) -> Void
+    private let onAnswer: (_ question: SurveyQuestion, _ answers: Set<SurveyAnswer>) -> Void
     private let onCompletion: () -> Void
     @State private var currentStep: Int = 1
-    @State private var answers: [SurveyQuestion: Set<String>] = [:]
+    @State private var answers: [SurveyQuestion: Set<SurveyAnswer>] = [:]
 
     private var currentQuestion: SurveyQuestion? {
         questions[safe: currentStep - 1]
@@ -52,7 +52,7 @@ public struct SurveyFlow {
     ///   - onCompletion: A closure that is called when the user completes the entire survey.
     public init(
         questions: [SurveyQuestion],
-        onAnswer: @escaping (SurveyQuestion, Set<String>) -> Void = { _, _ in },
+        onAnswer: @escaping (SurveyQuestion, Set<SurveyAnswer>) -> Void = { _, _ in },
         onCompletion: @escaping () -> Void = {}
     ) {
         self.questions = questions
@@ -76,7 +76,7 @@ public struct SurveyFlow {
         currentStep -= 1
     }
 
-    private func answersBinding(for question: SurveyQuestion) -> Binding<Set<String>> {
+    private func answersBinding(for question: SurveyQuestion) -> Binding<Set<SurveyAnswer>> {
         .init(
             get: { answers[question, default: .init()] },
             set: { answers[question] = $0 }
@@ -89,10 +89,13 @@ extension SurveyFlow: View {
         VStack(spacing: 16) {
             horizontalStepper
             surveyQuestionView
-            actionButtons
         }
         .padding(24)
         .background(.background.secondary)
+        .safeAreaInset(
+            edge: .bottom,
+            content: actionButtons
+        )
         .animation(.easeInOut, value: currentStep)
     }
 
@@ -113,16 +116,18 @@ extension SurveyFlow: View {
         }
     }
 
-    private var actionButtons: some View {
+    private func actionButtons() -> some View {
         HStack(spacing: 16) {
             backButton
             nextButton
         }
+        .padding(20)
+        .background(.background.tertiary)
     }
 
     private var nextButton: some View {
         Button(.next, action: nextAction)
-            .buttonStyle(.filled)
+            .buttonStyle(.primary)
             .disabled(isNextDisabled)
     }
 
@@ -130,7 +135,7 @@ extension SurveyFlow: View {
     private var backButton: some View {
         if isShowingBackButton {
             Button(.back, action: backAction)
-                .buttonStyle(.bezeledGray)
+                .buttonStyle(.secondary)
         }
     }
 }

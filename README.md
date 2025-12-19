@@ -40,12 +40,21 @@ Add SwiftUI-Surveys to your project through Xcode:
 let questions = [
     SurveyQuestion(
         title: "How would you describe your experience?",
-        answers: ["Beginner", "Intermediate", "Advanced"],
+        answers: [
+            .init(title: "Beginner"),
+            .init(title: "Intermediate"),
+            .init(title: "Advanced")
+        ],
         isMultipleChoice: false
     ),
     SurveyQuestion(
         title: "What features interest you?",
-        answers: ["Analytics", "Reporting", "Sharing", "Export"],
+        answers: [
+            .init(title: "Analytics"),
+            .init(title: "Reporting"),
+            .init(title: "Sharing"),
+            .init(title: "Export")
+        ],
         isMultipleChoice: true
     )
 ]
