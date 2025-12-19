@@ -40,21 +40,21 @@ Add SwiftUI-Surveys to your project through Xcode:
 ```swift
 let questions = [
     SurveyQuestion(
-        title: "How would you describe your experience?",
+        titleKey: "How would you describe your experience?",
         answers: [
-            .init(title: "Beginner"),
-            .init(title: "Intermediate"),
-            .init(title: "Advanced")
+            .init(titleKey: "Beginner"),
+            .init(titleKey: "Intermediate"),
+            .init(titleKey: "Advanced")
         ],
         isMultipleChoice: false
     ),
     SurveyQuestion(
-        title: "What features interest you?",
+        titleKey: "What features interest you?",
         answers: [
-            .init(title: "Analytics"),
-            .init(title: "Reporting"),
-            .init(title: "Sharing"),
-            .init(title: "Export")
+            .init(titleKey: "Analytics"),
+            .init(titleKey: "Reporting"),
+            .init(titleKey: "Sharing"),
+            .init(titleKey: "Export")
         ],
         isMultipleChoice: true
     )
@@ -68,20 +68,20 @@ Answers can include an optional SF Symbol to show alongside the label:
 ```swift
 let questions = [
     SurveyQuestion(
-        title: "How would you describe your experience?",
+        titleKey: "How would you describe your experience?",
         answers: [
-            .init(title: "Beginner", systemImage: "figure.walk"),
-            .init(title: "Intermediate", systemImage: "figure.hiking"),
-            .init(title: "Advanced", systemImage: "figure.run")
+            .init(titleKey: "Beginner", systemImage: "figure.walk"),
+            .init(titleKey: "Intermediate", systemImage: "figure.hiking"),
+            .init(titleKey: "Advanced", systemImage: "figure.run")
         ]
     ),
     SurveyQuestion(
-        title: "What features interest you?",
+        titleKey: "What features interest you?",
         answers: [
-            .init(title: "Analytics", systemImage: "chart.bar"),
-            .init(title: "Reporting", systemImage: "doc.text.magnifyingglass"),
-            .init(title: "Sharing", systemImage: "square.and.arrow.up"),
-            .init(title: "Export", systemImage: "arrow.down.doc")
+            .init(titleKey: "Analytics", systemImage: "chart.bar"),
+            .init(titleKey: "Reporting", systemImage: "doc.text.magnifyingglass"),
+            .init(titleKey: "Sharing", systemImage: "square.and.arrow.up"),
+            .init(titleKey: "Export", systemImage: "arrow.down.doc")
         ],
         isMultipleChoice: true
     )
@@ -95,11 +95,11 @@ SwiftUI-Surveys supports localization using `LocalizedStringKey`. You can provid
 ```swift
 let questions = [
     SurveyQuestion(
-        title: LocalizedStringKey("survey.question.experience"),
+        titleKey: "survey.question.experience",
         answers: [
-            .init(title: LocalizedStringKey("survey.answer.beginner"), systemImage: "figure.walk"),
-            .init(title: LocalizedStringKey("survey.answer.intermediate"), systemImage: "figure.hiking"),
-            .init(title: LocalizedStringKey("survey.answer.advanced"), systemImage: "figure.run")
+            .init(titleKey: "survey.answer.beginner", systemImage: "figure.walk"),
+            .init(titleKey: "survey.answer.intermediate", systemImage: "figure.hiking"),
+            .init(titleKey: "survey.answer.advanced", systemImage: "figure.run")
         ]
     )
 ]

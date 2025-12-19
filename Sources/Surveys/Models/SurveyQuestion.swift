@@ -6,25 +6,29 @@
 
 import SwiftUI
 
-public struct SurveyQuestion: Identifiable {
+public struct SurveyQuestion: Identifiable, Codable {
     public let id: String
-    public let title: LocalizedStringKey
+    public let titleKey: String
     public let answers: [SurveyAnswer]
     public let isMultipleChoice: Bool
     public let includeOther: Bool
 
     public init(
         id: String = UUID().uuidString,
-        title: LocalizedStringKey,
+        titleKey: String,
         answers: [SurveyAnswer],
         isMultipleChoice: Bool = false,
         includeOther: Bool = false
     ) {
         self.id = id
-        self.title = title
+        self.titleKey = titleKey
         self.answers = answers
         self.isMultipleChoice = isMultipleChoice
         self.includeOther = includeOther
+    }
+
+    public var title: LocalizedStringKey {
+        LocalizedStringKey(titleKey)
     }
 }
 

@@ -6,35 +6,49 @@
 
 import SwiftUI
 
-public struct SurveyAnswer: Identifiable {
+/// A single answer option for a survey question.
+public struct SurveyAnswer: Identifiable, Codable {
+    /// Stable identifier for this answer.
     public let id: String
-    public let title: LocalizedStringKey
+    /// Localization key for the answer title.
+    public let titleKey: String
+    /// Optional SF Symbol name to display with the answer.
     public let systemImage: String?
-    
+
     // Internal string representation for "other" answers and debugging
     internal let titleString: String?
 
+    /// Creates a survey answer with a localization key and optional system image.
+    /// - Parameters:
+    ///   - id: Stable identifier for the answer.
+    ///   - titleKey: Localization key for the answer title.
+    ///   - systemImage: Optional SF Symbol name to display.
     public init(
         id: String = UUID().uuidString,
-        title: LocalizedStringKey,
+        titleKey: String,
         systemImage: String? = nil
     ) {
         self.id = id
-        self.title = title
+        self.titleKey = titleKey
         self.systemImage = systemImage
         self.titleString = nil
     }
-    
+
     internal init(
         id: String = UUID().uuidString,
-        title: LocalizedStringKey,
+        titleKey: String,
         titleString: String,
         systemImage: String? = nil
     ) {
         self.id = id
-        self.title = title
+        self.titleKey = titleKey
         self.titleString = titleString
         self.systemImage = systemImage
+    }
+
+    /// Localized SwiftUI title derived from ``titleKey``.
+    public var title: LocalizedStringKey {
+        LocalizedStringKey(titleKey)
     }
 }
 
@@ -49,11 +63,11 @@ extension SurveyAnswer: Hashable {
 }
 
 extension SurveyAnswer: ExpressibleByStringLiteral {
-    /// Creates a SurveyAnswer from a string literal.
-    /// - Parameter value: The string value to use as the answer title.
+    /// Creates a survey answer from a string literal used as the localization key.
+    /// - Parameter value: The localization key for the answer title.
     public init(stringLiteral value: String) {
         self.id = UUID().uuidString
-        self.title = LocalizedStringKey(value)
+        self.titleKey = value
         self.titleString = nil
         self.systemImage = nil
     }
