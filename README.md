@@ -60,42 +60,32 @@ let questions = [
 ]
 ```
 
-### Using Identifiers
+### Using System Images
 
-Questions and answers support optional identifiers for external tracking systems. Both types conform to `Identifiable` for simplified SwiftUI usage:
+Answers can include an optional SF Symbol to show alongside the label:
 
 ```swift
 let questions = [
     SurveyQuestion(
-        identifier: "user-experience-q1",
         title: "How would you describe your experience?",
         answers: [
-            .init(identifier: "exp-beginner", title: "Beginner"),
-            .init(identifier: "exp-intermediate", title: "Intermediate"),
-            .init(identifier: "exp-advanced", title: "Advanced")
+            .init(title: "Beginner", systemImage: "figure.walk"),
+            .init(title: "Intermediate", systemImage: "figure.hiking"),
+            .init(title: "Advanced", systemImage: "figure.run")
         ]
     ),
     SurveyQuestion(
-        identifier: "feature-interest-q2",
         title: "What features interest you?",
         answers: [
-            .init(identifier: "feat-analytics", title: "Analytics"),
-            .init(identifier: "feat-reporting", title: "Reporting"),
-            .init(identifier: "feat-sharing", title: "Sharing"),
-            .init(identifier: "feat-export", title: "Export")
+            .init(title: "Analytics", systemImage: "chart.bar"),
+            .init(title: "Reporting", systemImage: "doc.text.magnifyingglass"),
+            .init(title: "Sharing", systemImage: "square.and.arrow.up"),
+            .init(title: "Export", systemImage: "arrow.down.doc")
         ],
         isMultipleChoice: true
     )
 ]
 ```
-
-The `identifier` property is useful for:
-- Paper surveys: `identifier: "question 1"`, `identifier: "answer A"`
-- Analytics tracking: `identifier: "app-user-sentiment-survey-question-1-version-1"`
-- Database mapping: Use identifiers as foreign keys
-- Multi-version surveys: Track question/answer versions over time
-
-**Note**: Both types conform to `Identifiable` using the `title` property as the `id` (consistent with equality/hashing). The `identifier` property is separate and used for external tracking only.
 
 ### Basic Implementation
 
@@ -112,16 +102,11 @@ struct ContentView: View {
             onAnswer: { question, answers in
                 // Handle each question's answers
                 print("Question: \(question.title)")
-                if let questionId = question.identifier {
-                    print("Question ID: \(questionId)")
-                }
                 print("Selected answers: \(answers)")
                 
-                // Access answer identifiers
+                // Access answer titles
                 for answer in answers {
-                    if let answerId = answer.identifier {
-                        print("Answer ID: \(answerId) - \(answer.title)")
-                    }
+                    print("Answer: \(answer.title)")
                 }
             },
             onCompletion: {
