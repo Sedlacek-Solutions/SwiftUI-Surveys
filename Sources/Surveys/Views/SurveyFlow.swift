@@ -20,15 +20,15 @@ import SwiftUI
 /// let questions = [SurveyQuestion(...), SurveyQuestion(...)]
 /// SurveyFlow(questions: questions) { question, answers in
 ///     // Handle each answer
-/// } onCompletion: {
-///     // Handle survey completion
+/// } onCompletion: { allAnswers in
+///     // Handle survey completion with all answers
 /// }
 /// ```
 @MainActor
 public struct SurveyFlow {
     private let questions: [SurveyQuestion]
     private let onAnswer: (_ question: SurveyQuestion, _ answers: Set<SurveyAnswer>) -> Void
-    private let onCompletion: () -> Void
+    private let onCompletion: (_ allAnswers: [SurveyQuestion: Set<SurveyAnswer>]) -> Void
     @State private var currentStep: Int = 1
     @State private var answers: [SurveyQuestion: Set<SurveyAnswer>] = [:]
 
@@ -49,11 +49,11 @@ public struct SurveyFlow {
     /// - Parameters:
     ///   - questions: An array of `SurveyQuestion` objects representing the survey questions to be presented.
     ///   - onAnswer: A closure that is called when the user answers a question. It provides both the question and the selected answers.
-    ///   - onCompletion: A closure that is called when the user completes the entire survey.
+    ///   - onCompletion: A closure that is called when the user completes the entire survey. It provides a dictionary of all questions and their corresponding answers.
     public init(
         questions: [SurveyQuestion],
         onAnswer: @escaping (SurveyQuestion, Set<SurveyAnswer>) -> Void = { _, _ in },
-        onCompletion: @escaping () -> Void = {}
+        onCompletion: @escaping ([SurveyQuestion: Set<SurveyAnswer>]) -> Void = { _ in }
     ) {
         self.questions = questions
         self.onAnswer = onAnswer
@@ -65,7 +65,7 @@ public struct SurveyFlow {
         onAnswer(currentQuestion, answer)
 
         guard currentStep < questions.count else {
-            onCompletion()
+            onCompletion(answers)
             return
         }
         currentStep += 1
@@ -145,7 +145,26 @@ extension SurveyFlow: View {
 }
 
 #Preview("English") {
-    SurveyFlow(questions: .mock())
+    SurveyFlow(
+        questions: .mock(),
+        onAnswer: { question, answers in
+            print(question.title)
+            print("Answer(s):")
+            for answer in answers {
+                print(answer.title)
+            }
+        },
+        onCompletion: { SurveyQA in
+            print("Survey completed")
+            for (question, answers) in SurveyQA {
+                print(question.title)
+                print("Answer(s):")
+                for answer in answers {
+                    print(answer.title)
+                }
+            }
+        }
+    )
 }
 
 #Preview("Spanish") {
