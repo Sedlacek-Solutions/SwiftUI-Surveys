@@ -37,14 +37,14 @@ struct SurveyQuestionView {
     }
 
     private func otherTextChanged(oldText: String, newText: String) {
-        answers.remove(SurveyAnswer(title: oldText))
+        answers.remove(SurveyAnswer(title: LocalizedStringKey(oldText), titleString: oldText))
         guard !newText.isEmpty else { return }
 
         if !question.isMultipleChoice {
             answers.removeAll()
         }
 
-        answers.insert(SurveyAnswer(title: newText))
+        answers.insert(SurveyAnswer(title: LocalizedStringKey(newText), titleString: newText))
     }
 
     /// Resets the 'other' text field based on the current answers.
@@ -52,12 +52,12 @@ struct SurveyQuestionView {
     /// it will be set as the other text. Otherwise, other text will be cleared.
     private func resetOtherText() {
         guard let otherAnswer = answers.first(where: { answer in
-            !question.answers.contains(where: { $0.title == answer.title })
+            !question.answers.contains(answer)
         }) else {
             otherText = ""
             return
         }
-        otherText = otherAnswer.title
+        otherText = otherAnswer.titleString ?? ""
     }
 }
 
@@ -72,7 +72,7 @@ extension SurveyQuestionView: View {
     }
 
     private var titleView: some View {
-        Text(question.title)
+        Text(question.title, bundle: .module)
             .font(.largeTitle.weight(.semibold))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 24)
@@ -81,7 +81,7 @@ extension SurveyQuestionView: View {
     @ViewBuilder
     private var selectAllThatApplyView: some View {
         if question.isMultipleChoice {
-            Text(.selectAllThatApply)
+            Text(.selectAllThatApply, bundle: .module)
                 .font(.headline.weight(.medium))
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -102,9 +102,13 @@ extension SurveyQuestionView: View {
     private func answerToggle(answer: SurveyAnswer) -> some View {
         Toggle(isOn: binding(for: answer)) {
             if let systemImage = answer.systemImage {
-                Label(answer.title, systemImage: systemImage)
+                Label {
+                    Text(answer.title, bundle: .module)
+                } icon: {
+                    Image(systemName: systemImage)
+                }
             } else {
-                Text(answer.title)
+                Text(answer.title, bundle: .module)
             }
         }
         .toggleStyle(.labeledCheckmark)

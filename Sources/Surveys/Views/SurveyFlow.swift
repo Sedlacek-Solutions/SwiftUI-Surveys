@@ -126,20 +126,29 @@ extension SurveyFlow: View {
     }
 
     private var nextButton: some View {
-        Button(.next, action: nextAction)
-            .buttonStyle(.primary)
-            .disabled(isNextDisabled)
+        Button(action: nextAction) {
+            Text(.next, bundle: .module)
+        }
+        .buttonStyle(.primary)
+        .disabled(isNextDisabled)
     }
 
     @ViewBuilder
     private var backButton: some View {
         if isShowingBackButton {
-            Button(.back, action: backAction)
-                .buttonStyle(.secondary)
+            Button(action: backAction) {
+                Text(.back, bundle: .module)
+            }
+            .buttonStyle(.secondary)
         }
     }
 }
 
-#Preview {
+#Preview("English") {
     SurveyFlow(questions: .mock())
+}
+
+#Preview("Spanish") {
+    SurveyFlow(questions: .mock())
+        .environment(\.locale, .init(identifier: "es"))
 }

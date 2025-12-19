@@ -4,18 +4,18 @@
 //  Created by James Sedlacek on 11/13/24.
 //
 
-import Foundation
+import SwiftUI
 
-public struct SurveyQuestion: Hashable, Identifiable {
+public struct SurveyQuestion: Identifiable {
     public let id: String
-    public let title: String
+    public let title: LocalizedStringKey
     public let answers: [SurveyAnswer]
     public let isMultipleChoice: Bool
     public let includeOther: Bool
 
     public init(
         id: String = UUID().uuidString,
-        title: String,
+        title: LocalizedStringKey,
         answers: [SurveyAnswer],
         isMultipleChoice: Bool = false,
         includeOther: Bool = false
@@ -25,5 +25,15 @@ public struct SurveyQuestion: Hashable, Identifiable {
         self.answers = answers
         self.isMultipleChoice = isMultipleChoice
         self.includeOther = includeOther
+    }
+}
+
+extension SurveyQuestion: Hashable {
+    public static func == (lhs: SurveyQuestion, rhs: SurveyQuestion) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

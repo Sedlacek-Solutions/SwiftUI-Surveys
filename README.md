@@ -13,6 +13,7 @@ SwiftUI-Surveys makes it easy to create professional-looking surveys with a mode
 - ✨ Automatic answer validation
 - 🎯 Completion handling
 - 🎨 Clean and modern UI with smooth animations
+- 🌍 Full localization support with LocalizedStringKey
 - 📱 Fully SwiftUI native
 
 ## Requirements
@@ -40,12 +41,21 @@ Add SwiftUI-Surveys to your project through Xcode:
 let questions = [
     SurveyQuestion(
         title: "How would you describe your experience?",
-        answers: ["Beginner", "Intermediate", "Advanced"],
+        answers: [
+            .init(title: "Beginner"),
+            .init(title: "Intermediate"),
+            .init(title: "Advanced")
+        ],
         isMultipleChoice: false
     ),
     SurveyQuestion(
         title: "What features interest you?",
-        answers: ["Analytics", "Reporting", "Sharing", "Export"],
+        answers: [
+            .init(title: "Analytics"),
+            .init(title: "Reporting"),
+            .init(title: "Sharing"),
+            .init(title: "Export")
+        ],
         isMultipleChoice: true
     )
 ]
@@ -77,6 +87,56 @@ let questions = [
     )
 ]
 ```
+
+### Localization Support
+
+SwiftUI-Surveys supports localization using `LocalizedStringKey`. You can provide localized strings for both questions and answers:
+
+```swift
+let questions = [
+    SurveyQuestion(
+        title: LocalizedStringKey("survey.question.experience"),
+        answers: [
+            .init(title: LocalizedStringKey("survey.answer.beginner"), systemImage: "figure.walk"),
+            .init(title: LocalizedStringKey("survey.answer.intermediate"), systemImage: "figure.hiking"),
+            .init(title: LocalizedStringKey("survey.answer.advanced"), systemImage: "figure.run")
+        ]
+    )
+]
+```
+
+Add your localized strings to your `Localizable.strings` file:
+
+```
+// English (en)
+"survey.question.experience" = "How would you describe your experience?";
+"survey.answer.beginner" = "Beginner";
+"survey.answer.intermediate" = "Intermediate";
+"survey.answer.advanced" = "Advanced";
+
+// Spanish (es)
+"survey.question.experience" = "¿Cómo describirías tu experiencia?";
+"survey.answer.beginner" = "Principiante";
+"survey.answer.intermediate" = "Intermedio";
+"survey.answer.advanced" = "Avanzado";
+```
+
+### Included Localizations
+
+The package ships translations for the built-in UI strings (Back, Next, Other, Select all that apply) in these locales:
+
+- English (en)
+- Spanish (es)
+- French (fr)
+- German (de)
+- Italian (it)
+- Portuguese (Brazil) (pt-BR)
+- Japanese (ja)
+- Korean (ko)
+- Chinese (Simplified) (zh-Hans)
+- Chinese (Traditional) (zh-Hant)
+
+When using the provided `LocalizedStringKey` helpers (for example `.back`, `.next`), use `Text(..., bundle: .module)` so the keys resolve from the package bundle.
 
 ### Basic Implementation
 
@@ -139,7 +199,9 @@ extension ContentScreen: View {
     }
 
     private func skipButton() -> some View {
-        Button(.skip, action: skipAction)
+        Button(action: skipAction) {
+            Text(.skip, bundle: .module)
+        }
     }
 }
 
