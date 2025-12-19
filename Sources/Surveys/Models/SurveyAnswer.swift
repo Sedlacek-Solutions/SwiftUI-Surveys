@@ -5,10 +5,12 @@
 //
 
 public struct SurveyAnswer: Hashable {
+    public let identifier: String?
     public let title: String
     public let systemImage: String?
 
-    public init(title: String, systemImage: String? = nil) {
+    public init(identifier: String? = nil, title: String, systemImage: String? = nil) {
+        self.identifier = identifier
         self.title = title
         self.systemImage = systemImage
     }

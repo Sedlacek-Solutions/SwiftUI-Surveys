@@ -60,6 +60,41 @@ let questions = [
 ]
 ```
 
+### Using Identifiers
+
+Questions and answers support optional identifiers for external tracking systems:
+
+```swift
+let questions = [
+    SurveyQuestion(
+        identifier: "user-experience-q1",
+        title: "How would you describe your experience?",
+        answers: [
+            .init(identifier: "exp-beginner", title: "Beginner"),
+            .init(identifier: "exp-intermediate", title: "Intermediate"),
+            .init(identifier: "exp-advanced", title: "Advanced")
+        ]
+    ),
+    SurveyQuestion(
+        identifier: "feature-interest-q2",
+        title: "What features interest you?",
+        answers: [
+            .init(identifier: "feat-analytics", title: "Analytics"),
+            .init(identifier: "feat-reporting", title: "Reporting"),
+            .init(identifier: "feat-sharing", title: "Sharing"),
+            .init(identifier: "feat-export", title: "Export")
+        ],
+        isMultipleChoice: true
+    )
+]
+```
+
+This is useful for:
+- Paper surveys: `identifier: "question 1"`, `identifier: "answer A"`
+- Analytics tracking: `identifier: "app-user-sentiment-survey-question-1-version-1"`
+- Database mapping: Use identifiers as foreign keys
+- Multi-version surveys: Track question/answer versions over time
+
 ### Basic Implementation
 
 ```swift
@@ -75,7 +110,17 @@ struct ContentView: View {
             onAnswer: { question, answers in
                 // Handle each question's answers
                 print("Question: \(question.title)")
+                if let questionId = question.identifier {
+                    print("Question ID: \(questionId)")
+                }
                 print("Selected answers: \(answers)")
+                
+                // Access answer identifiers
+                for answer in answers {
+                    if let answerId = answer.identifier {
+                        print("Answer ID: \(answerId) - \(answer.title)")
+                    }
+                }
             },
             onCompletion: {
                 // Handle survey completion
