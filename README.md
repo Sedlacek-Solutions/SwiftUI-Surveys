@@ -1,9 +1,9 @@
-![SwiftUI-Surveys](https://github.com/user-attachments/assets/cba9fc77-c42c-4c9e-96c9-de7c6dabb2dd)
-
 # SwiftUI-Surveys
 
 A Swift package that provides an elegant and customizable survey interface for iOS applications using SwiftUI. <br>
 SwiftUI-Surveys makes it easy to create professional-looking surveys with a modern design and smooth user experience.
+
+<img width="6888" height="2976" alt="InsightsSurvey" src="https://github.com/user-attachments/assets/d8cf3f50-c747-4969-92a3-e7d33e30c08b" />
 
 ## Features
 
