@@ -145,7 +145,26 @@ extension SurveyFlow: View {
 }
 
 #Preview("English") {
-    SurveyFlow(questions: .mock())
+    SurveyFlow(
+        questions: .mock(),
+        onAnswer: { question, answers in
+            print(question.title)
+            print("Answer(s):")
+            for answer in answers {
+                print(answer.title)
+            }
+        },
+        onCompletion: { SurveyQA in
+            print("Survey completed")
+            for (question, answers) in SurveyQA {
+                print(question.title)
+                print("Answer(s):")
+                for answer in answers {
+                    print(answer.title)
+                }
+            }
+        }
+    )
 }
 
 #Preview("Spanish") {
