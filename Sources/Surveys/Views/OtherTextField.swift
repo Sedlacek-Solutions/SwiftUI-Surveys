@@ -35,7 +35,9 @@ struct OtherTextField {
 extension OtherTextField: View {
     var body: some View {
         HStack(spacing: .zero) {
-            TextField(.other, text: $text)
+            TextField(text: $text, prompt: Text(.other, bundle: .module)) {
+                Text(.other, bundle: .module)
+            }
                 .focused($focusState)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 10)

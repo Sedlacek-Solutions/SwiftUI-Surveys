@@ -41,12 +41,21 @@ Add SwiftUI-Surveys to your project through Xcode:
 let questions = [
     SurveyQuestion(
         title: "How would you describe your experience?",
-        answers: ["Beginner", "Intermediate", "Advanced"],
+        answers: [
+            .init(title: "Beginner"),
+            .init(title: "Intermediate"),
+            .init(title: "Advanced")
+        ],
         isMultipleChoice: false
     ),
     SurveyQuestion(
         title: "What features interest you?",
-        answers: ["Analytics", "Reporting", "Sharing", "Export"],
+        answers: [
+            .init(title: "Analytics"),
+            .init(title: "Reporting"),
+            .init(title: "Sharing"),
+            .init(title: "Export")
+        ],
         isMultipleChoice: true
     )
 ]
@@ -112,6 +121,23 @@ Add your localized strings to your `Localizable.strings` file:
 "survey.answer.advanced" = "Avanzado";
 ```
 
+### Included Localizations
+
+The package ships translations for the built-in UI strings (Back, Next, Other, Select all that apply) in these locales:
+
+- English (en)
+- Spanish (es)
+- French (fr)
+- German (de)
+- Italian (it)
+- Portuguese (Brazil) (pt-BR)
+- Japanese (ja)
+- Korean (ko)
+- Chinese (Simplified) (zh-Hans)
+- Chinese (Traditional) (zh-Hant)
+
+When using the provided `LocalizedStringKey` helpers (for example `.back`, `.next`), use `Text(..., bundle: .module)` so the keys resolve from the package bundle.
+
 ### Basic Implementation
 
 ```swift
@@ -173,7 +199,9 @@ extension ContentScreen: View {
     }
 
     private func skipButton() -> some View {
-        Button(.skip, action: skipAction)
+        Button(action: skipAction) {
+            Text(.skip, bundle: .module)
+        }
     }
 }
 

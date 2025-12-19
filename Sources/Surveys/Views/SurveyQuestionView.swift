@@ -72,7 +72,7 @@ extension SurveyQuestionView: View {
     }
 
     private var titleView: some View {
-        Text(question.title)
+        Text(question.title, bundle: .module)
             .font(.largeTitle.weight(.semibold))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 24)
@@ -81,7 +81,7 @@ extension SurveyQuestionView: View {
     @ViewBuilder
     private var selectAllThatApplyView: some View {
         if question.isMultipleChoice {
-            Text(.selectAllThatApply)
+            Text(.selectAllThatApply, bundle: .module)
                 .font(.headline.weight(.medium))
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -102,9 +102,13 @@ extension SurveyQuestionView: View {
     private func answerToggle(answer: SurveyAnswer) -> some View {
         Toggle(isOn: binding(for: answer)) {
             if let systemImage = answer.systemImage {
-                Label(answer.title, systemImage: systemImage)
+                Label {
+                    Text(answer.title, bundle: .module)
+                } icon: {
+                    Image(systemName: systemImage)
+                }
             } else {
-                Text(answer.title)
+                Text(answer.title, bundle: .module)
             }
         }
         .toggleStyle(.labeledCheckmark)

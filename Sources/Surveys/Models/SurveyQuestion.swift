@@ -6,7 +6,7 @@
 
 import SwiftUI
 
-public struct SurveyQuestion: Hashable, Identifiable {
+public struct SurveyQuestion: Identifiable {
     public let id: String
     public let title: LocalizedStringKey
     public let answers: [SurveyAnswer]
@@ -25,5 +25,15 @@ public struct SurveyQuestion: Hashable, Identifiable {
         self.answers = answers
         self.isMultipleChoice = isMultipleChoice
         self.includeOther = includeOther
+    }
+}
+
+extension SurveyQuestion: Hashable {
+    public static func == (lhs: SurveyQuestion, rhs: SurveyQuestion) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
