@@ -13,6 +13,7 @@ SwiftUI-Surveys makes it easy to create professional-looking surveys with a mode
 - ✨ Automatic answer validation
 - 🎯 Completion handling
 - 🎨 Clean and modern UI with smooth animations
+- 🌍 Full localization support with LocalizedStringKey
 - 📱 Fully SwiftUI native
 
 ## Requirements
@@ -76,6 +77,39 @@ let questions = [
         isMultipleChoice: true
     )
 ]
+```
+
+### Localization Support
+
+SwiftUI-Surveys supports localization using `LocalizedStringKey`. You can provide localized strings for both questions and answers:
+
+```swift
+let questions = [
+    SurveyQuestion(
+        title: LocalizedStringKey("survey.question.experience"),
+        answers: [
+            .init(title: LocalizedStringKey("survey.answer.beginner"), systemImage: "figure.walk"),
+            .init(title: LocalizedStringKey("survey.answer.intermediate"), systemImage: "figure.hiking"),
+            .init(title: LocalizedStringKey("survey.answer.advanced"), systemImage: "figure.run")
+        ]
+    )
+]
+```
+
+Add your localized strings to your `Localizable.strings` file:
+
+```
+// English (en)
+"survey.question.experience" = "How would you describe your experience?";
+"survey.answer.beginner" = "Beginner";
+"survey.answer.intermediate" = "Intermediate";
+"survey.answer.advanced" = "Advanced";
+
+// Spanish (es)
+"survey.question.experience" = "¿Cómo describirías tu experiencia?";
+"survey.answer.beginner" = "Principiante";
+"survey.answer.intermediate" = "Intermedio";
+"survey.answer.advanced" = "Avanzado";
 ```
 
 ### Basic Implementation
