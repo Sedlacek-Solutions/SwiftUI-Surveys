@@ -10,9 +10,9 @@ public struct SurveyAnswer: Hashable, Identifiable {
     public let systemImage: String?
     
     /// Computed ID for Identifiable conformance.
-    /// Uses the identifier if available, otherwise falls back to title.
+    /// Uses title to be consistent with equality and hashing behavior.
     public var id: String {
-        identifier ?? title
+        title
     }
 
     public init(identifier: String? = nil, title: String, systemImage: String? = nil) {

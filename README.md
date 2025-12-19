@@ -62,7 +62,7 @@ let questions = [
 
 ### Using Identifiers
 
-Questions and answers support optional identifiers for external tracking systems. Both types conform to `Identifiable`, using the identifier if provided, otherwise falling back to the title:
+Questions and answers support optional identifiers for external tracking systems. Both types conform to `Identifiable` for simplified SwiftUI usage:
 
 ```swift
 let questions = [
@@ -89,12 +89,13 @@ let questions = [
 ]
 ```
 
-This is useful for:
+The `identifier` property is useful for:
 - Paper surveys: `identifier: "question 1"`, `identifier: "answer A"`
 - Analytics tracking: `identifier: "app-user-sentiment-survey-question-1-version-1"`
 - Database mapping: Use identifiers as foreign keys
 - Multi-version surveys: Track question/answer versions over time
-- SwiftUI ForEach: Both types conform to `Identifiable` for simplified usage
+
+**Note**: Both types conform to `Identifiable` using the `title` property as the `id` (consistent with equality/hashing). The `identifier` property is separate and used for external tracking only.
 
 ### Basic Implementation
 
