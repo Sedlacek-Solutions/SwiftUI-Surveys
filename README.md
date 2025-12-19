@@ -151,7 +151,7 @@ struct ContentView: View {
         SurveyFlow(
             questions: questions,
             onAnswer: { question, answers in
-                // Handle each question's answers as they are submitted
+                // Handle each question's answers immediately when user submits
                 print("Question: \(question.title)")
                 print("Selected answers: \(answers)")
                 
