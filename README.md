@@ -51,17 +51,31 @@ let questions = [
 ]
 ```
 
-For answers with icons, use the full initializer:
+### Using System Images
+
+Answers can include an optional SF Symbol to show alongside the label:
 
 ```swift
-SurveyQuestion(
-    title: "What best describes you?",
-    answers: [
-        .init(title: "Learning & exploring", systemImage: "graduationcap"),
-        .init(title: "Solo founder", systemImage: "person"),
-        .init(title: "Small team", systemImage: "person.2")
-    ]
-)
+let questions = [
+    SurveyQuestion(
+        title: "How would you describe your experience?",
+        answers: [
+            .init(title: "Beginner", systemImage: "figure.walk"),
+            .init(title: "Intermediate", systemImage: "figure.hiking"),
+            .init(title: "Advanced", systemImage: "figure.run")
+        ]
+    ),
+    SurveyQuestion(
+        title: "What features interest you?",
+        answers: [
+            .init(title: "Analytics", systemImage: "chart.bar"),
+            .init(title: "Reporting", systemImage: "doc.text.magnifyingglass"),
+            .init(title: "Sharing", systemImage: "square.and.arrow.up"),
+            .init(title: "Export", systemImage: "arrow.down.doc")
+        ],
+        isMultipleChoice: true
+    )
+]
 ```
 
 ### Basic Implementation
@@ -80,6 +94,11 @@ struct ContentView: View {
                 // Handle each question's answers
                 print("Question: \(question.title)")
                 print("Selected answers: \(answers)")
+                
+                // Access answer titles
+                for answer in answers {
+                    print("Answer: \(answer.title)")
+                }
             },
             onCompletion: {
                 // Handle survey completion
