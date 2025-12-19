@@ -151,7 +151,7 @@ struct ContentView: View {
         SurveyFlow(
             questions: questions,
             onAnswer: { question, answers in
-                // Handle each question's answers
+                // Handle each question's answers as they are submitted
                 print("Question: \(question.title)")
                 print("Selected answers: \(answers)")
                 
@@ -160,11 +160,44 @@ struct ContentView: View {
                     print("Answer: \(answer.title)")
                 }
             },
-            onCompletion: {
-                // Handle survey completion
-                print("Survey completed")
+            onCompletion: { allAnswers in
+                // Handle survey completion with all questions and answers
+                print("Survey completed!")
+                print("Total questions answered: \(allAnswers.count)")
+                
+                // Process all answers together
+                for (question, answers) in allAnswers {
+                    print("Question: \(question.title)")
+                    print("Answers: \(answers.map { $0.title })")
+                }
+                
+                // Example: Serialize to JSON and upload
+                // let jsonData = encodeToJSON(allAnswers)
+                // uploadSurveyResults(jsonData)
             }
         )
+    }
+}
+```
+
+### Handling Only Final Results
+
+If you don't need to process answers individually as they're submitted, you can omit the `onAnswer` parameter and only handle the final results:
+
+```swift
+struct ContentView: View {
+    let questions: [SurveyQuestion] = .mock()
+
+    var body: some View {
+        SurveyFlow(questions: questions) { allAnswers in
+            // Handle all answers at once when survey is complete
+            processSurveyResults(allAnswers)
+        }
+    }
+    
+    func processSurveyResults(_ answers: [SurveyQuestion: Set<SurveyAnswer>]) {
+        // Process or serialize all answers together
+        print("Survey completed with \(answers.count) questions answered")
     }
 }
 ```
