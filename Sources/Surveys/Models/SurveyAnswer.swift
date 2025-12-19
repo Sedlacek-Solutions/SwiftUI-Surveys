@@ -4,10 +4,16 @@
 //  Created by James Sedlacek on 2/3/25.
 //
 
-public struct SurveyAnswer: Hashable {
+public struct SurveyAnswer: Hashable, Identifiable {
     public let identifier: String?
     public let title: String
     public let systemImage: String?
+    
+    /// Computed ID for Identifiable conformance.
+    /// Uses the identifier if available, otherwise falls back to title.
+    public var id: String {
+        identifier ?? title
+    }
 
     public init(identifier: String? = nil, title: String, systemImage: String? = nil) {
         self.identifier = identifier

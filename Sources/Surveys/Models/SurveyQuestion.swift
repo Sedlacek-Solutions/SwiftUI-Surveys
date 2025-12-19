@@ -4,12 +4,18 @@
 //  Created by James Sedlacek on 11/13/24.
 //
 
-public struct SurveyQuestion: Hashable {
+public struct SurveyQuestion: Hashable, Identifiable {
     public let identifier: String?
     public let title: String
     public let answers: [SurveyAnswer]
     public let isMultipleChoice: Bool
     public let includeOther: Bool
+    
+    /// Computed ID for Identifiable conformance.
+    /// Uses the identifier if available, otherwise falls back to title.
+    public var id: String {
+        identifier ?? title
+    }
 
     public init(
         identifier: String? = nil,

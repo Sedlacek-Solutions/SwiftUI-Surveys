@@ -90,11 +90,7 @@ extension SurveyQuestionView: View {
     private var answerList: some View {
         ScrollView {
             VStack(spacing: 24) {
-                ForEach(
-                    question.answers,
-                    id: \.self,
-                    content: answerToggle
-                )
+                ForEach(question.answers, content: answerToggle)
 
                 otherTextField
             }
