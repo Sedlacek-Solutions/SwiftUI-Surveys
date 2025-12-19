@@ -42,6 +42,7 @@ extension SurveyAnswer: ExpressibleByStringLiteral {
     /// Creates a SurveyAnswer from a string literal.
     /// - Parameter value: The string value to use as the answer title.
     public init(stringLiteral value: String) {
+        self.id = UUID().uuidString
         self.title = LocalizedStringKey(value)
         self.titleString = nil
         self.systemImage = nil
