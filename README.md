@@ -138,6 +138,23 @@ The package ships translations for the built-in UI strings (Back, Next, Other, S
 
 When using the provided `LocalizedStringKey` helpers (for example `.back`, `.next`), use `Text(..., bundle: .module)` so the keys resolve from the package bundle.
 
+### JSON Support
+
+`SurveyQuestion` and `SurveyAnswer` conform to `Codable`, so you can serialize surveys to JSON and load them back at runtime:
+
+```swift
+import Surveys
+
+let questions: [SurveyQuestion] = .mock()
+
+let encoder = JSONEncoder()
+encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+let data = try encoder.encode(questions)
+
+let decoder = JSONDecoder()
+let decoded = try decoder.decode([SurveyQuestion].self, from: data)
+```
+
 ### Basic Implementation
 
 ```swift
