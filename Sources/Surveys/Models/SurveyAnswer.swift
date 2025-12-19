@@ -21,3 +21,12 @@ public struct SurveyAnswer: Hashable {
         hasher.combine(title)
     }
 }
+
+extension SurveyAnswer: ExpressibleByStringLiteral {
+    /// Creates a SurveyAnswer from a string literal.
+    /// - Parameter value: The string value to use as the answer title.
+    public init(stringLiteral value: String) {
+        self.title = value
+        self.systemImage = nil
+    }
+}
