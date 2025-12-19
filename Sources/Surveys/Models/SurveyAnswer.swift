@@ -21,3 +21,12 @@ public struct SurveyAnswer: Identifiable, Hashable {
         self.systemImage = systemImage
     }
 }
+
+extension SurveyAnswer: ExpressibleByStringLiteral {
+    /// Creates a SurveyAnswer from a string literal.
+    /// - Parameter value: The string value to use as the answer title.
+    public init(stringLiteral value: String) {
+        self.title = value
+        self.systemImage = nil
+    }
+}
