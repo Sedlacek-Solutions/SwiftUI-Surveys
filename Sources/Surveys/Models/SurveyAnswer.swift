@@ -22,8 +22,6 @@ public struct SurveyAnswer: Hashable {
     }
 }
 
-// MARK: - ExpressibleByStringLiteral
-
 extension SurveyAnswer: ExpressibleByStringLiteral {
     /// Creates a SurveyAnswer from a string literal.
     /// - Parameter value: The string value to use as the answer title.
