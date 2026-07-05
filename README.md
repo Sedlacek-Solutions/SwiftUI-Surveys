@@ -3,11 +3,16 @@
 A Swift package that provides an elegant and customizable survey interface for iOS applications using SwiftUI. <br>
 SwiftUI-Surveys makes it easy to create professional-looking surveys with a modern design and smooth user experience.
 
-<img width="6888" height="2976" alt="InsightsSurvey" src="https://github.com/user-attachments/assets/d8cf3f50-c747-4969-92a3-e7d33e30c08b" />
+<p align="center">
+  <img width="260" alt="SwiftUI-Surveys light mode question flow" src="Assets/Screenshots/light-mode.png" />
+  <img width="260" alt="SwiftUI-Surveys dark mode question flow" src="Assets/Screenshots/dark-mode.png" />
+  <img width="260" alt="SwiftUI-Surveys custom content step" src="Assets/Screenshots/custom-content.png" />
+</p>
 
 ## Features
 
-- 📊 Horizontal step indicator for survey progress
+- 📊 Native progress indicator for survey progress
+- 🧭 Mix questions with non-question content steps
 - ✅ Support for single and multiple choice questions
 - 🔄 Seamless navigation between questions with back/next functionality
 - ✨ Automatic answer validation
@@ -123,7 +128,7 @@ Add your localized strings to your `Localizable.strings` file:
 
 ### Included Localizations
 
-The package ships translations for the built-in UI strings (Back, Next, Other, Select all that apply) in these locales:
+The package ships translations for the built-in UI strings (Back, Continue, Next, Other, Select all that apply) in these locales:
 
 - English (en)
 - Spanish (es)
@@ -138,21 +143,159 @@ The package ships translations for the built-in UI strings (Back, Next, Other, S
 
 When using the provided `LocalizedStringKey` helpers (for example `.back`, `.next`), use `Text(..., bundle: .module)` so the keys resolve from the package bundle.
 
+### Adding Custom Content Steps
+
+Use `SurveyFlowStep` when your flow needs screens that are not questions, such as onboarding, education, charts, product previews, or any other custom SwiftUI content:
+
+```swift
+let steps: [SurveyFlowStep] = [
+    .custom {
+        VStack(spacing: 24) {
+            Text("Designed to help you stay on track")
+                .font(.largeTitle.weight(.semibold))
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            CustomChartView()
+
+            Text("Track your habits and stay consistent over time.")
+                .font(.title3)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+    },
+    .question(
+        .init(
+            titleKey: "What best describes your goal?",
+            answers: [
+                .init(titleKey: "Build consistency", systemImage: "calendar"),
+                .init(titleKey: "Understand trends", systemImage: "chart.xyaxis.line"),
+                .init(titleKey: "Stay accountable", systemImage: "checkmark.circle")
+            ]
+        )
+    ),
+    .custom(isScrollable: false) {
+        CustomFullScreenSummaryView()
+    }
+]
+
+SurveyFlow(
+    flowSteps: steps,
+    onFlowStepContinue: { step in
+        // Track every submitted step, including custom content screens
+        print("Continued from step: \(step.id)")
+        print("Step type: \(step.stepType)")
+    },
+    onAnswer: { question, answers in
+        // Called only for question steps
+        print("Question: \(question.title)")
+        print("Selected answers: \(answers)")
+    },
+    onCompletion: { allAnswers in
+        // Contains only question answers, not content steps
+        processSurveyResults(allAnswers)
+    }
+)
+```
+
+Use `flowSteps:` for runtime-only custom SwiftUI screens. Use `steps:` for Codable `SurveyStep` arrays that can be loaded from JSON.
+
+By default, `.custom` wraps your content in the same scroll container as other content screens. Pass `isScrollable: false` when your custom view owns its own scrolling or fixed layout.
+
+### Branching Between Steps
+
+Flows advance linearly by default. Pass `nextStep` when the next screen should depend on the submitted step or the answers collected so far:
+
+```swift
+let quickAnswer = SurveyAnswer(id: "quick", titleKey: "Keep it short")
+let detailedAnswer = SurveyAnswer(id: "detailed", titleKey: "Show me more")
+let setupQuestion = SurveyQuestion(
+    id: "setup-depth",
+    titleKey: "How much setup guidance do you want?",
+    answers: [quickAnswer, detailedAnswer]
+)
+
+let steps: [SurveyFlowStep] = [
+    .question(setupQuestion),
+    .custom(id: "details") {
+        DetailedSetupView()
+    },
+    .custom(id: "summary") {
+        SummaryView()
+    }
+]
+
+SurveyFlow(
+    flowSteps: steps,
+    nextStep: { step, answers in
+        guard step.question?.id == setupQuestion.id else {
+            return .next
+        }
+
+        if answers[setupQuestion, default: []].contains(quickAnswer) {
+            return .step(id: "summary")
+        }
+
+        return .next
+    },
+    onCompletion: { allAnswers in
+        processSurveyResults(allAnswers)
+    }
+)
+```
+
+`nextStep` returns `SurveyFlowNavigation.next`, `.step(id:)`, or `.complete`. Back navigation follows the user's actual path, so if a branch skips a screen, Back returns to the previous visited screen. Completion results include answers from the completed path, so answers from abandoned branches are not returned.
+
+Custom content steps are runtime-only because SwiftUI views cannot be encoded to JSON. Use `SurveyStep` and `SurveyContentStep` when you need Codable, runtime-loaded survey definitions:
+
+```swift
+let codableSteps: [SurveyStep] = [
+    .content(
+        .init(
+            titleKey: "Welcome",
+            bodyKey: "This screen can be loaded from JSON.",
+            media: .systemImage("sparkles")
+        )
+    ),
+    .question(
+        .init(
+            titleKey: "How would you describe your experience?",
+            answers: [
+                .init(titleKey: "Beginner"),
+                .init(titleKey: "Intermediate"),
+                .init(titleKey: "Advanced")
+            ]
+        )
+    )
+]
+```
+
 ### JSON Support
 
-`SurveyQuestion` and `SurveyAnswer` conform to `Codable`, so you can serialize surveys to JSON and load them back at runtime:
+`SurveyStep`, `SurveyContentStep`, `SurveyContentMedia`, `SurveyQuestion`, and `SurveyAnswer` conform to `Codable`, so you can serialize data-driven surveys to JSON and load them back at runtime:
 
 ```swift
 import Surveys
 
-let questions: [SurveyQuestion] = .mock()
+let steps: [SurveyStep] = [
+    .content(.init(titleKey: "Welcome")),
+    .question(
+        .init(
+            titleKey: "How would you describe your experience?",
+            answers: [
+                .init(titleKey: "Beginner"),
+                .init(titleKey: "Intermediate"),
+                .init(titleKey: "Advanced")
+            ]
+        )
+    )
+]
 
 let encoder = JSONEncoder()
 encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-let data = try encoder.encode(questions)
+let data = try encoder.encode(steps)
 
 let decoder = JSONDecoder()
-let decoded = try decoder.decode([SurveyQuestion].self, from: data)
+let decoded = try decoder.decode([SurveyStep].self, from: data)
 ```
 
 ### Basic Implementation
@@ -206,10 +349,10 @@ struct ContentView: View {
     let questions: [SurveyQuestion] = .mock()
 
     var body: some View {
-        SurveyFlow(questions: questions) { allAnswers in
+        SurveyFlow(questions: questions, onCompletion: { allAnswers in
             // Handle all answers at once when survey is complete
             processSurveyResults(allAnswers)
-        }
+        })
     }
     
     func processSurveyResults(_ answers: [SurveyQuestion: Set<SurveyAnswer>]) {
@@ -217,6 +360,22 @@ struct ContentView: View {
         print("Survey completed with \(answers.count) questions answered")
     }
 }
+```
+
+### Handling Back From The First Question
+
+Use `onBack` when the first question's Back button should dismiss the survey or return to a previous app screen:
+
+```swift
+SurveyFlow(
+    questions: questions,
+    onBack: {
+        dismiss()
+    },
+    onCompletion: { allAnswers in
+        processSurveyResults(allAnswers)
+    }
+)
 ```
 
 ### Skip Button Example

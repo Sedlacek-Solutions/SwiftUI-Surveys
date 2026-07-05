@@ -14,7 +14,10 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "Surveys"),
+            name: "Surveys",
+            resources: [
+                .process("Resources/Localizable.xcstrings")
+            ]),
 
     ]
 )

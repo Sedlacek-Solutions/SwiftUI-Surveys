@@ -75,7 +75,8 @@ extension SurveyQuestionView: View {
         Text(question.title, bundle: .module)
             .font(.largeTitle.weight(.semibold))
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, 24)
+            .padding(.top, 8)
+            .padding(.bottom, 24)
     }
 
     @ViewBuilder

@@ -12,10 +12,11 @@ struct ColoredIconLabelStyle: LabelStyle {
     var textColor: Color = .primary
 
     func makeBody(configuration: Configuration) -> some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 12) {
             configuration.icon
                 .foregroundStyle(iconColor)
                 .font(.title3.weight(.medium))
+                .frame(width: 34)
 
             configuration.title
                 .foregroundStyle(textColor)

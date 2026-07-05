@@ -9,6 +9,7 @@ import SwiftUI
 @MainActor
 extension LocalizedStringKey {
     static let back = LocalizedStringKey("Back")
+    static let continueButton = LocalizedStringKey("Continue")
     static let other = LocalizedStringKey("Other")
     static let next = LocalizedStringKey("Next")
     static let selectAllThatApply = LocalizedStringKey("Select all that apply")
