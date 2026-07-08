@@ -10,7 +10,6 @@ struct LabeledCheckmarkToggleStyle: ToggleStyle {
     @Environment(\.surveyAccentColor) private var surveyAccentColor
 
     func makeBody(configuration: Configuration) -> some View {
-        let symbol: SFSymbol = configuration.isOn ? .checkmarkCircleFill : .circle
         let borderColor = configuration.isOn ? surveyAccentColor : .clear
 
         Button(
@@ -22,19 +21,31 @@ struct LabeledCheckmarkToggleStyle: ToggleStyle {
                     configuration.label
                         .labelStyle(.coloredIcon(iconColor: surveyAccentColor))
                     Spacer(minLength: .zero)
-                    Image(symbol)
-                        .foregroundStyle(surveyAccentColor)
+                    selectionIndicator(isSelected: configuration.isOn)
                 }
             }
         )
-        .buttonStyle(.secondary(.rect(cornerRadius: 10)))
+        .buttonStyle(.secondary(.rect(cornerRadius: 10), isSelected: configuration.isOn))
         .overlay(
             RoundedRectangle(cornerRadius: 10)
                 .strokeBorder(
-                    borderColor,
+                    borderColor.opacity(0.6),
                     style: .init(lineWidth: 2)
                 )
         )
+    }
+
+    @ViewBuilder
+    private func selectionIndicator(isSelected: Bool) -> some View {
+        if isSelected {
+            Image(.checkmarkCircleFill)
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(.white, surveyAccentColor)
+        } else {
+            Image(.circle)
+                .foregroundStyle(.secondary)
+                .opacity(0.7)
+        }
     }
 }
 

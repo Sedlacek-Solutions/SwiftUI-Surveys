@@ -14,14 +14,24 @@ struct ColoredIconLabelStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 12) {
             configuration.icon
-                .foregroundStyle(iconColor)
-                .font(.title3.weight(.medium))
-                .frame(width: 34)
+                .foregroundStyle(.white)
+                .font(.subheadline.weight(.semibold))
+                .frame(width: 32, height: 30)
+                .background(iconBackground)
 
             configuration.title
                 .foregroundStyle(textColor)
         }
         .font(.body.weight(.medium))
+    }
+
+    private var iconBackground: some View {
+        RoundedRectangle(cornerRadius: 8)
+            .fill(.quaternary)
+            .overlay {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(iconColor.opacity(0.8))
+            }
     }
 }
 

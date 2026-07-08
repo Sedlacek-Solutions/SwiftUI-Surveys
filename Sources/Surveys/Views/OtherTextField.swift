@@ -12,15 +12,11 @@ struct OtherTextField {
     @Environment(\.surveyAccentColor) private var surveyAccentColor
     @Binding private var text: String
 
-    var symbol: SFSymbol {
-        text.isEmpty ? .circle : .checkmarkCircleFill
-    }
-
     var borderColor: Color {
-        text.isEmpty ? Color.clear : surveyAccentColor
+        isSelected ? surveyAccentColor.opacity(0.6) : .clear
     }
 
-    var isShowingClearButton: Bool {
+    var isSelected: Bool {
         !text.isEmpty
     }
 
@@ -43,17 +39,12 @@ extension OtherTextField: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 10)
 
-            Image(symbol)
-                .foregroundStyle(surveyAccentColor)
-                .font(.title3.weight(.semibold))
+            selectionIndicator
         }
         .padding(.horizontal)
         .frame(maxWidth: .infinity)
         .frame(height: 48)
-        .background(
-            .background.secondary,
-            in: .rect(cornerRadius: 10)
-        )
+        .background(backgroundView)
         .foregroundStyle(.primary)
         .font(.body.weight(.medium))
         .overlay(
@@ -65,6 +56,33 @@ extension OtherTextField: View {
         )
         .contentShape(.rect)
         .onTapGesture(perform: onTapGesture)
+    }
+
+    private var backgroundView: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(.background.secondary)
+
+            if isSelected {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(surveyAccentColor.opacity(0.03))
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var selectionIndicator: some View {
+        if isSelected {
+            Image(.checkmarkCircleFill)
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(.white, surveyAccentColor)
+                .font(.title3.weight(.semibold))
+        } else {
+            Image(.circle)
+                .foregroundStyle(.secondary)
+                .font(.title3.weight(.semibold))
+                .opacity(0.7)
+        }
     }
 }
 

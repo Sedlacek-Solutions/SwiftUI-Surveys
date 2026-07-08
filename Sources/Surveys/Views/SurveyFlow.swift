@@ -73,13 +73,8 @@ public struct SurveyFlow {
         }
     }
 
-    private var nextButtonTitle: LocalizedStringKey {
-        switch currentSurveyStep?.storage {
-        case .content, .custom:
-            .continueButton
-        case .question, nil:
-            .next
-        }
+    private var continueButtonTitle: LocalizedStringKey {
+        .continueButton
     }
 
     /// Creates a new survey flow with the specified questions and callback handlers.
@@ -405,7 +400,7 @@ extension SurveyFlow: View {
 
     private var nextButton: some View {
         Button(action: nextAction) {
-            Text(nextButtonTitle, bundle: .module)
+            Text(continueButtonTitle, bundle: .module)
         }
         .buttonStyle(.primary)
         .disabled(isNextDisabled)
