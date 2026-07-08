@@ -32,6 +32,7 @@ public struct SurveyFlow {
     private let nextStep: SurveyFlowNextStep
     private let onAnswer: (_ question: SurveyQuestion, _ answers: Set<SurveyAnswer>) -> Void
     private let onCompletion: (_ allAnswers: [SurveyQuestion: Set<SurveyAnswer>]) -> Void
+    @Environment(\.surveyAccentColor) private var surveyAccentColor
     @State private var currentStepID: String
     @State private var stepHistory: [String] = []
     @State private var answers: [SurveyQuestion: Set<SurveyAnswer>] = [:]
@@ -355,6 +356,7 @@ extension SurveyFlow: View {
             total: Double(steps.count)
         )
         .progressViewStyle(.linear)
+        .tint(surveyAccentColor)
     }
 
     @ViewBuilder
@@ -615,7 +617,14 @@ private extension View {
         .environment(\.locale, .init(identifier: "es"))
 }
 
+#Preview("Custom Accent") {
+    SurveyFlow(questions: .mock())
+        .surveyAccentColor(.purple)
+}
+
 private struct PreviewTrendChart: View {
+    @Environment(\.surveyAccentColor) private var surveyAccentColor
+
     var body: some View {
         Canvas { context, size in
             let path = Path { path in
@@ -626,7 +635,7 @@ private struct PreviewTrendChart: View {
                     control2: CGPoint(x: size.width * 0.56, y: size.height * 0.1)
                 )
             }
-            context.stroke(path, with: .color(.blue), lineWidth: 4)
+            context.stroke(path, with: .color(surveyAccentColor), lineWidth: 4)
 
             let baseline = Path { path in
                 path.move(to: CGPoint(x: 0, y: size.height * 0.38))
@@ -642,12 +651,13 @@ private struct PreviewFeatureRow: View {
     let title: String
     let subtitle: String
     let systemImage: String
+    @Environment(\.surveyAccentColor) private var surveyAccentColor
 
     var body: some View {
         HStack(alignment: .top, spacing: 14) {
             Image(systemName: systemImage)
                 .font(.title3.weight(.semibold))
-                .foregroundStyle(.blue)
+                .foregroundStyle(surveyAccentColor)
                 .frame(width: 32, height: 32)
 
             VStack(alignment: .leading, spacing: 4) {
@@ -668,12 +678,13 @@ private struct PreviewStatCard: View {
     let value: String
     let label: String
     let systemImage: String
+    @Environment(\.surveyAccentColor) private var surveyAccentColor
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Image(systemName: systemImage)
                 .font(.title3.weight(.semibold))
-                .foregroundStyle(.blue)
+                .foregroundStyle(surveyAccentColor)
 
             Text(value)
                 .font(.title2.weight(.bold))

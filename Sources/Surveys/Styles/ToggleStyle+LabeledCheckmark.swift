@@ -7,9 +7,11 @@
 import SwiftUI
 
 struct LabeledCheckmarkToggleStyle: ToggleStyle {
+    @Environment(\.surveyAccentColor) private var surveyAccentColor
+
     func makeBody(configuration: Configuration) -> some View {
         let symbol: SFSymbol = configuration.isOn ? .checkmarkCircleFill : .circle
-        let borderColor = configuration.isOn ? Color.blue : .clear
+        let borderColor = configuration.isOn ? surveyAccentColor : .clear
 
         Button(
             action: {
@@ -18,10 +20,10 @@ struct LabeledCheckmarkToggleStyle: ToggleStyle {
             label: {
                 HStack {
                     configuration.label
-                        .labelStyle(.coloredIcon)
+                        .labelStyle(.coloredIcon(iconColor: surveyAccentColor))
                     Spacer(minLength: .zero)
                     Image(symbol)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(surveyAccentColor)
                 }
             }
         )

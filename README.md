@@ -143,6 +143,17 @@ The package ships translations for the built-in UI strings (Back, Continue, Next
 
 When using the provided `LocalizedStringKey` helpers (for example `.back`, `.next`), use `Text(..., bundle: .module)` so the keys resolve from the package bundle.
 
+### Custom Accent Color
+
+Use `surveyAccentColor(_:)` to theme the built-in survey controls:
+
+```swift
+SurveyFlow(questions: questions)
+    .surveyAccentColor(.purple)
+```
+
+The modifier updates the built-in blue survey UI, including answer icons, selected borders, checkmarks, progress, content-step symbols, and the primary action button. Semantic colors, such as success states, keep their original meaning.
+
 ### Adding Custom Content Steps
 
 Use `SurveyFlowStep` when your flow needs screens that are not questions, such as onboarding, education, charts, product previews, or any other custom SwiftUI content:

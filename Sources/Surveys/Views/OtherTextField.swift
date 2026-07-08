@@ -9,6 +9,7 @@ import SwiftUI
 @MainActor
 struct OtherTextField {
     @FocusState private var focusState: Bool
+    @Environment(\.surveyAccentColor) private var surveyAccentColor
     @Binding private var text: String
 
     var symbol: SFSymbol {
@@ -16,7 +17,7 @@ struct OtherTextField {
     }
 
     var borderColor: Color {
-        text.isEmpty ? Color.clear : .blue
+        text.isEmpty ? Color.clear : surveyAccentColor
     }
 
     var isShowingClearButton: Bool {
@@ -43,7 +44,7 @@ extension OtherTextField: View {
                 .padding(.horizontal, 10)
 
             Image(symbol)
-                .foregroundStyle(.blue)
+                .foregroundStyle(surveyAccentColor)
                 .font(.title3.weight(.semibold))
         }
         .padding(.horizontal)

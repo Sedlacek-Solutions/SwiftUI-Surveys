@@ -8,6 +8,7 @@ import SwiftUI
 
 @MainActor
 struct SurveyContentStepView {
+    @Environment(\.surveyAccentColor) private var surveyAccentColor
     private let step: SurveyContentStep
 
     init(step: SurveyContentStep) {
@@ -52,7 +53,7 @@ extension SurveyContentStepView: View {
                     .resizable()
                     .scaledToFit()
                     .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(surveyAccentColor)
                     .frame(maxWidth: 160, maxHeight: 160)
                     .padding(32)
                     .background(.background.secondary, in: RoundedRectangle(cornerRadius: 8))

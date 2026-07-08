@@ -8,13 +8,14 @@ import SwiftUI
 
 struct PrimaryButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.surveyAccentColor) private var surveyAccentColor
 
     private var backgroundColor: Color {
-        isEnabled ? .blue : .blue.opacity(0.2)
+        isEnabled ? surveyAccentColor : surveyAccentColor.opacity(0.2)
     }
 
     private var foregroundColor: Color {
-        isEnabled ? .white : .blue
+        isEnabled ? .white : surveyAccentColor
     }
 
     func makeBody(configuration: Configuration) -> some View {

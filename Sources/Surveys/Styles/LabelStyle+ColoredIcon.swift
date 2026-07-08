@@ -28,12 +28,12 @@ struct ColoredIconLabelStyle: LabelStyle {
 extension LabelStyle where Self == ColoredIconLabelStyle {
     @MainActor @preconcurrency
     static var coloredIcon: ColoredIconLabelStyle {
-        .init(iconColor: .blue, textColor: .primary)
+        .init(iconColor: .accentColor, textColor: .primary)
     }
 
     @MainActor @preconcurrency
     static func coloredIcon(
-        iconColor: Color = .blue,
+        iconColor: Color = .accentColor,
         textColor: Color = .primary
     ) -> ColoredIconLabelStyle {
         .init(iconColor: iconColor, textColor: textColor)
