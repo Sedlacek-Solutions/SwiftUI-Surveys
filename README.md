@@ -154,6 +154,31 @@ SurveyFlow(questions: questions)
 
 The modifier updates the built-in blue survey UI, including answer icons, selected borders, checkmarks, progress, content-step symbols, and the primary action button. Semantic colors, such as success states, keep their original meaning.
 
+### Custom Step Animation
+
+Survey screens animate in by default when the user moves between steps. Built-in question and content screens show the title first, then cascade answers or content items into place.
+
+Use `surveyFlowAnimation(_:)` to tune or disable the entrance animation:
+
+```swift
+SurveyFlow(questions: questions)
+    .surveyFlowAnimation(.disabled)
+```
+
+```swift
+SurveyFlow(questions: questions)
+    .surveyFlowAnimation(
+        .init(
+            progressAnimation: .smooth(duration: 0.56, extraBounce: 0),
+            itemBaseDelay: 0.1,
+            itemDelay: 0.04,
+            verticalOffset: 8
+        )
+    )
+```
+
+Custom content steps receive the outer step entrance animation, while their internal layout remains fully controlled by your custom SwiftUI view.
+
 ### Adding Custom Content Steps
 
 Use `SurveyFlowStep` when your flow needs screens that are not questions, such as onboarding, education, charts, product previews, or any other custom SwiftUI content:

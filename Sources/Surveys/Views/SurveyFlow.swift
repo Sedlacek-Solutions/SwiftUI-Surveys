@@ -33,6 +33,7 @@ public struct SurveyFlow {
     private let onAnswer: (_ question: SurveyQuestion, _ answers: Set<SurveyAnswer>) -> Void
     private let onCompletion: (_ allAnswers: [SurveyQuestion: Set<SurveyAnswer>]) -> Void
     @Environment(\.surveyAccentColor) private var surveyAccentColor
+    @Environment(\.surveyFlowAnimation) private var surveyFlowAnimation
     @State private var currentStepID: String
     @State private var stepHistory: [String] = []
     @State private var answers: [SurveyQuestion: Set<SurveyAnswer>] = [:]
@@ -335,7 +336,6 @@ extension SurveyFlow: View {
             edge: .bottom,
             content: actionButtons
         )
-        .animation(.easeInOut, value: currentStepID)
     }
 
     private var toolbar: some View {
@@ -352,6 +352,10 @@ extension SurveyFlow: View {
         )
         .progressViewStyle(.linear)
         .tint(surveyAccentColor)
+        .animation(
+            surveyFlowAnimation.isEnabled ? surveyFlowAnimation.progressAnimation : nil,
+            value: currentStepIndex
+        )
     }
 
     @ViewBuilder
@@ -360,14 +364,24 @@ extension SurveyFlow: View {
         case .question(let currentQuestion):
             SurveyQuestionView(
                 question: currentQuestion,
-                answers: answersBinding(for: currentQuestion)
+                answers: answersBinding(for: currentQuestion),
+                animationTrigger: currentStepID
             )
         case .content(let contentStep):
-            SurveyContentStepView(step: contentStep)
+            SurveyContentStepView(
+                step: contentStep,
+                animationTrigger: currentStepID
+            )
         case .custom(let isScrollable, let content):
             customContentView(
                 isScrollable: isScrollable,
                 content: content
+            )
+            .surveyEntrance(
+                trigger: currentStepID,
+                delay: surveyFlowAnimation.titleDelay,
+                animation: surveyFlowAnimation.titleAnimation,
+                configuration: surveyFlowAnimation
             )
         case nil:
             EmptyView()
@@ -615,6 +629,11 @@ private extension View {
 #Preview("Custom Accent") {
     SurveyFlow(questions: .mock())
         .surveyAccentColor(.purple)
+}
+
+#Preview("Animation Disabled") {
+    SurveyFlow(questions: .mock())
+        .surveyFlowAnimation(.disabled)
 }
 
 private struct PreviewTrendChart: View {

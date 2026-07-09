@@ -9,10 +9,16 @@ import SwiftUI
 @MainActor
 struct SurveyContentStepView {
     @Environment(\.surveyAccentColor) private var surveyAccentColor
+    @Environment(\.surveyFlowAnimation) private var surveyFlowAnimation
     private let step: SurveyContentStep
+    private let animationTrigger: String
 
-    init(step: SurveyContentStep) {
+    init(
+        step: SurveyContentStep,
+        animationTrigger: String
+    ) {
         self.step = step
+        self.animationTrigger = animationTrigger
     }
 }
 
@@ -30,18 +36,44 @@ extension SurveyContentStepView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 8)
             .padding(.bottom, 24)
+            .surveyEntrance(
+                trigger: animationTrigger,
+                delay: surveyFlowAnimation.titleDelay,
+                animation: surveyFlowAnimation.titleAnimation,
+                configuration: surveyFlowAnimation
+            )
     }
 
     private var contentView: some View {
         ScrollView {
             VStack(spacing: 28) {
                 mediaView
+                    .surveyEntrance(
+                        trigger: animationTrigger,
+                        delay: itemDelay(for: 0),
+                        animation: surveyFlowAnimation.itemAnimation,
+                        configuration: surveyFlowAnimation
+                    )
                 bodyView
+                    .surveyEntrance(
+                        trigger: animationTrigger,
+                        delay: itemDelay(for: bodyItemIndex),
+                        animation: surveyFlowAnimation.itemAnimation,
+                        configuration: surveyFlowAnimation
+                    )
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical)
         }
         .scrollIndicators(.hidden)
+    }
+
+    private var bodyItemIndex: Int {
+        step.media == nil ? 0 : 1
+    }
+
+    private func itemDelay(for index: Int) -> TimeInterval {
+        surveyFlowAnimation.itemBaseDelay + (Double(index) * surveyFlowAnimation.itemDelay)
     }
 
     @ViewBuilder
@@ -86,7 +118,8 @@ extension SurveyContentStepView: View {
             titleKey: "Designed to help you stay on track",
             bodyKey: "Track your habits and stay consistent over time.",
             media: .systemImage("chart.line.uptrend.xyaxis")
-        )
+        ),
+        animationTrigger: "preview"
     )
     .padding(24)
 }

@@ -9,14 +9,18 @@ import SwiftUI
 @MainActor
 struct SurveyQuestionView {
     private let question: SurveyQuestion
+    private let animationTrigger: String
+    @Environment(\.surveyFlowAnimation) private var surveyFlowAnimation
     @Binding private var answers: Set<SurveyAnswer>
     @State private var otherText: String = ""
 
     init(
         question: SurveyQuestion,
-        answers: Binding<Set<SurveyAnswer>>
+        answers: Binding<Set<SurveyAnswer>>,
+        animationTrigger: String
     ) {
         self.question = question
+        self.animationTrigger = animationTrigger
         self._answers = answers
     }
 
@@ -77,6 +81,12 @@ extension SurveyQuestionView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 8)
             .padding(.bottom, 24)
+            .surveyEntrance(
+                trigger: animationTrigger,
+                delay: surveyFlowAnimation.titleDelay,
+                animation: surveyFlowAnimation.titleAnimation,
+                configuration: surveyFlowAnimation
+            )
     }
 
     @ViewBuilder
@@ -85,19 +95,41 @@ extension SurveyQuestionView: View {
             Text(.selectAllThatApply, bundle: .module)
                 .font(.headline.weight(.medium))
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .surveyEntrance(
+                    trigger: animationTrigger,
+                    delay: itemDelay(for: 0),
+                    animation: surveyFlowAnimation.itemAnimation,
+                    configuration: surveyFlowAnimation
+                )
         }
     }
 
     private var answerList: some View {
         ScrollView {
             VStack(spacing: 24) {
-                ForEach(question.answers, content: answerToggle)
+                ForEach(Array(question.answers.enumerated()), id: \.element.id) { index, answer in
+                    answerToggle(answer: answer)
+                        .surveyEntrance(
+                            trigger: animationTrigger,
+                            delay: itemDelay(for: answerIndexOffset + index),
+                            animation: surveyFlowAnimation.itemAnimation,
+                            configuration: surveyFlowAnimation
+                        )
+                }
 
                 otherTextField
             }
             .padding(.vertical)
         }
         .scrollIndicators(.hidden)
+    }
+
+    private var answerIndexOffset: Int {
+        question.isMultipleChoice ? 1 : 0
+    }
+
+    private func itemDelay(for index: Int) -> TimeInterval {
+        surveyFlowAnimation.itemBaseDelay + (Double(index) * surveyFlowAnimation.itemDelay)
     }
 
     private func answerToggle(answer: SurveyAnswer) -> some View {
@@ -120,6 +152,12 @@ extension SurveyQuestionView: View {
         if question.includeOther {
             OtherTextField(text: $otherText)
                 .onChange(of: otherText, otherTextChanged)
+                .surveyEntrance(
+                    trigger: animationTrigger,
+                    delay: itemDelay(for: answerIndexOffset + question.answers.count),
+                    animation: surveyFlowAnimation.itemAnimation,
+                    configuration: surveyFlowAnimation
+                )
         }
     }
 }
