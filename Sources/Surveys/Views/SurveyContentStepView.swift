@@ -11,13 +11,16 @@ struct SurveyContentStepView {
     @Environment(\.surveyAccentColor) private var surveyAccentColor
     @Environment(\.surveyFlowAnimation) private var surveyFlowAnimation
     private let step: SurveyContentStep
+    private let textBundle: Bundle?
     private let animationTrigger: String
 
     init(
         step: SurveyContentStep,
+        textBundle: Bundle?,
         animationTrigger: String
     ) {
         self.step = step
+        self.textBundle = textBundle
         self.animationTrigger = animationTrigger
     }
 }
@@ -31,7 +34,7 @@ extension SurveyContentStepView: View {
     }
 
     private var titleView: some View {
-        Text(step.title, bundle: .module)
+        Text(step.title, bundle: textBundle ?? .module)
             .font(.largeTitle.weight(.semibold))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 8)
@@ -102,7 +105,7 @@ extension SurveyContentStepView: View {
     @ViewBuilder
     private var bodyView: some View {
         if let body = step.body {
-            Text(body, bundle: .module)
+            Text(body, bundle: textBundle ?? .module)
                 .font(.title3.weight(.medium))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -119,6 +122,7 @@ extension SurveyContentStepView: View {
             bodyKey: "Track your habits and stay consistent over time.",
             media: .systemImage("chart.line.uptrend.xyaxis")
         ),
+        textBundle: nil,
         animationTrigger: "preview"
     )
     .padding(24)

@@ -32,6 +32,7 @@ public struct SurveyFlow {
     private let nextStep: SurveyFlowNextStep
     private let onAnswer: (_ question: SurveyQuestion, _ answers: Set<SurveyAnswer>) -> Void
     private let onCompletion: (_ allAnswers: [SurveyQuestion: Set<SurveyAnswer>]) -> Void
+    let textBundle: Bundle?
     @Environment(\.surveyAccentColor) private var surveyAccentColor
     @Environment(\.surveyFlowAnimation) private var surveyFlowAnimation
     @State private var currentStepID: String
@@ -87,6 +88,7 @@ public struct SurveyFlow {
     ///   - onCompletion: A closure that is called when the user completes the entire survey. It provides a dictionary of all questions and their corresponding answers.
     public init(
         questions: [SurveyQuestion],
+        textBundle: Bundle? = nil,
         onAnswer: @escaping (SurveyQuestion, Set<SurveyAnswer>) -> Void = { _, _ in },
         onStepContinue: @escaping (SurveyStep) -> Void = { _ in },
         nextStep: @escaping SurveyFlowNextStep = { _, _ in .next },
@@ -94,6 +96,7 @@ public struct SurveyFlow {
     ) {
         self.init(
             internalFlowSteps: questions.map { SurveyFlowStep.question($0) },
+            textBundle: textBundle,
             onBack: {},
             onFlowStepContinue: { step in
                 if let surveyStep = step.surveyStep {
@@ -116,6 +119,7 @@ public struct SurveyFlow {
     ///   - onCompletion: A closure that is called when the user completes the entire survey. It provides a dictionary of all questions and their corresponding answers.
     public init(
         questions: [SurveyQuestion],
+        textBundle: Bundle? = nil,
         onBack: @escaping () -> Void,
         onAnswer: @escaping (SurveyQuestion, Set<SurveyAnswer>) -> Void = { _, _ in },
         onStepContinue: @escaping (SurveyStep) -> Void = { _ in },
@@ -124,6 +128,7 @@ public struct SurveyFlow {
     ) {
         self.init(
             internalFlowSteps: questions.map { SurveyFlowStep.question($0) },
+            textBundle: textBundle,
             onBack: onBack,
             onFlowStepContinue: { step in
                 if let surveyStep = step.surveyStep {
@@ -145,6 +150,7 @@ public struct SurveyFlow {
     ///   - onCompletion: A closure that is called when the user completes the entire survey. It provides a dictionary of all questions and their corresponding answers.
     public init(
         steps: [SurveyStep],
+        textBundle: Bundle? = nil,
         onStepContinue: @escaping (SurveyStep) -> Void = { _ in },
         onAnswer: @escaping (SurveyQuestion, Set<SurveyAnswer>) -> Void = { _, _ in },
         nextStep: @escaping SurveyFlowNextStep = { _, _ in .next },
@@ -152,6 +158,7 @@ public struct SurveyFlow {
     ) {
         self.init(
             internalFlowSteps: steps.map(SurveyFlowStep.init),
+            textBundle: textBundle,
             onBack: {},
             onFlowStepContinue: { step in
                 if let surveyStep = step.surveyStep {
@@ -174,6 +181,7 @@ public struct SurveyFlow {
     ///   - onCompletion: A closure that is called when the user completes the entire survey. It provides a dictionary of all questions and their corresponding answers.
     public init(
         steps: [SurveyStep],
+        textBundle: Bundle? = nil,
         onBack: @escaping () -> Void,
         onStepContinue: @escaping (SurveyStep) -> Void = { _ in },
         onAnswer: @escaping (SurveyQuestion, Set<SurveyAnswer>) -> Void = { _, _ in },
@@ -182,6 +190,7 @@ public struct SurveyFlow {
     ) {
         self.init(
             internalFlowSteps: steps.map(SurveyFlowStep.init),
+            textBundle: textBundle,
             onBack: onBack,
             onFlowStepContinue: { step in
                 if let surveyStep = step.surveyStep {
@@ -203,6 +212,7 @@ public struct SurveyFlow {
     ///   - onCompletion: A closure that is called when the user completes the entire survey. It provides a dictionary of all questions and their corresponding answers.
     public init(
         flowSteps: [SurveyFlowStep],
+        textBundle: Bundle? = nil,
         onFlowStepContinue: @escaping (SurveyFlowStep) -> Void = { _ in },
         onAnswer: @escaping (SurveyQuestion, Set<SurveyAnswer>) -> Void = { _, _ in },
         nextStep: @escaping SurveyFlowNextStep = { _, _ in .next },
@@ -210,6 +220,7 @@ public struct SurveyFlow {
     ) {
         self.init(
             internalFlowSteps: flowSteps,
+            textBundle: textBundle,
             onBack: {},
             onFlowStepContinue: onFlowStepContinue,
             nextStep: nextStep,
@@ -228,6 +239,7 @@ public struct SurveyFlow {
     ///   - onCompletion: A closure that is called when the user completes the entire survey. It provides a dictionary of all questions and their corresponding answers.
     public init(
         flowSteps: [SurveyFlowStep],
+        textBundle: Bundle? = nil,
         onBack: @escaping () -> Void,
         onFlowStepContinue: @escaping (SurveyFlowStep) -> Void = { _ in },
         onAnswer: @escaping (SurveyQuestion, Set<SurveyAnswer>) -> Void = { _, _ in },
@@ -236,6 +248,7 @@ public struct SurveyFlow {
     ) {
         self.init(
             internalFlowSteps: flowSteps,
+            textBundle: textBundle,
             onBack: onBack,
             onFlowStepContinue: onFlowStepContinue,
             nextStep: nextStep,
@@ -246,6 +259,7 @@ public struct SurveyFlow {
 
     private init(
         internalFlowSteps: [SurveyFlowStep],
+        textBundle: Bundle?,
         onBack: @escaping () -> Void,
         onFlowStepContinue: @escaping (SurveyFlowStep) -> Void,
         nextStep: @escaping SurveyFlowNextStep,
@@ -253,6 +267,7 @@ public struct SurveyFlow {
         onCompletion: @escaping ([SurveyQuestion: Set<SurveyAnswer>]) -> Void
     ) {
         self.steps = internalFlowSteps
+        self.textBundle = textBundle
         self.onBack = onBack
         self.onFlowStepContinue = onFlowStepContinue
         self.nextStep = nextStep
@@ -364,12 +379,14 @@ extension SurveyFlow: View {
         case .question(let currentQuestion):
             SurveyQuestionView(
                 question: currentQuestion,
+                textBundle: textBundle,
                 answers: answersBinding(for: currentQuestion),
                 animationTrigger: currentStepID
             )
         case .content(let contentStep):
             SurveyContentStepView(
                 step: contentStep,
+                textBundle: textBundle,
                 animationTrigger: currentStepID
             )
         case .custom(let isScrollable, let content):

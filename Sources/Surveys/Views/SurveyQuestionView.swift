@@ -9,6 +9,7 @@ import SwiftUI
 @MainActor
 struct SurveyQuestionView {
     private let question: SurveyQuestion
+    private let textBundle: Bundle?
     private let animationTrigger: String
     @Environment(\.surveyFlowAnimation) private var surveyFlowAnimation
     @Binding private var answers: Set<SurveyAnswer>
@@ -16,10 +17,12 @@ struct SurveyQuestionView {
 
     init(
         question: SurveyQuestion,
+        textBundle: Bundle?,
         answers: Binding<Set<SurveyAnswer>>,
         animationTrigger: String
     ) {
         self.question = question
+        self.textBundle = textBundle
         self.animationTrigger = animationTrigger
         self._answers = answers
     }
@@ -76,7 +79,7 @@ extension SurveyQuestionView: View {
     }
 
     private var titleView: some View {
-        Text(question.title, bundle: .module)
+        Text(question.title, bundle: textBundle ?? .module)
             .font(.largeTitle.weight(.semibold))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 8)
@@ -136,12 +139,12 @@ extension SurveyQuestionView: View {
         Toggle(isOn: binding(for: answer)) {
             if let systemImage = answer.systemImage {
                 Label {
-                    Text(answer.title, bundle: .module)
+                    Text(answer.title, bundle: textBundle ?? .module)
                 } icon: {
                     Image(systemName: systemImage)
                 }
             } else {
-                Text(answer.title, bundle: .module)
+                Text(answer.title, bundle: textBundle ?? .module)
             }
         }
         .toggleStyle(.labeledCheckmark)
