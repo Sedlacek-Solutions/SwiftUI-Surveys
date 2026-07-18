@@ -4,9 +4,11 @@ A Swift package that provides an elegant and customizable survey interface for i
 SwiftUI-Surveys makes it easy to create professional-looking surveys with a modern design and smooth user experience.
 
 <p align="center">
-  <img width="260" alt="SwiftUI-Surveys light mode question flow" src="Assets/Screenshots/light-mode.png" />
-  <img width="260" alt="SwiftUI-Surveys dark mode question flow" src="Assets/Screenshots/dark-mode.png" />
-  <img width="260" alt="SwiftUI-Surveys custom content step" src="Assets/Screenshots/custom-content.png" />
+  <img width="160" alt="Single-choice survey question shown in a diagonal light and dark mode split" src="Assets/README/single-choice-light-dark.png" />
+  <img width="160" alt="Custom SwiftUI content step in dark mode" src="Assets/README/custom-content-dark.png" />
+  <img width="160" alt="Multiple-choice survey question with three answers selected" src="Assets/README/multiple-choice.png" />
+  <img width="160" alt="Discovery-source survey with eight options, real app icons, and Other" src="Assets/README/discovery-sources-other.png" />
+  <img width="160" alt="Purple-accent survey question showing the Other text field" src="Assets/README/custom-theme-other.png" />
 </p>
 
 ## Features
