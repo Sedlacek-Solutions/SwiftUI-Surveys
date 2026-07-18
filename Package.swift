@@ -16,7 +16,8 @@ let package = Package(
         .target(
             name: "Surveys",
             resources: [
-                .process("Resources/Localizable.xcstrings")
+                .process("Resources/Localizable.xcstrings"),
+                .process("Resources/BrandIcons")
             ]),
         .testTarget(
             name: "SurveysTests",

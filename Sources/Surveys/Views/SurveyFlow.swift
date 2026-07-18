@@ -68,6 +68,8 @@ public struct SurveyFlow {
         switch currentSurveyStep?.storage {
         case .question(let question):
             answers[question, default: .init()].isEmpty
+        case .discoveryQuestion(let discoveryQuestion):
+            answers[discoveryQuestion.question, default: .init()].isEmpty
         case .content, .custom:
             false
         case nil:
@@ -283,6 +285,9 @@ public struct SurveyFlow {
         case .question(let question):
             guard let answer = answers[question] else { return }
             onAnswer(question, answer)
+        case .discoveryQuestion(let discoveryQuestion):
+            guard let answer = answers[discoveryQuestion.question] else { return }
+            onAnswer(discoveryQuestion.question, answer)
         case .content, .custom:
             break
         }
@@ -381,6 +386,13 @@ extension SurveyFlow: View {
                 question: currentQuestion,
                 textBundle: textBundle,
                 answers: answersBinding(for: currentQuestion),
+                animationTrigger: currentStepID
+            )
+        case .discoveryQuestion(let discoveryQuestion):
+            SurveyDiscoveryQuestionView(
+                question: discoveryQuestion,
+                textBundle: textBundle,
+                answers: answersBinding(for: discoveryQuestion.question),
                 animationTrigger: currentStepID
             )
         case .content(let contentStep):
@@ -482,6 +494,26 @@ private extension View {
         }
     )
 }
+#Preview("Discovery Sources") {
+    let question = SurveyDiscoveryQuestion(
+        id: "discovery-source",
+        titleKey: "How did you hear about us?",
+        sources: SurveyDiscoverySource.allPresets
+    )
+    SurveyFlow(flowSteps: [.discoveryQuestion(question)])
+}
+
+#Preview("Discovery Sources Accessibility") {
+    let question = SurveyDiscoveryQuestion(
+        id: "discovery-source",
+        titleKey: "How did you hear about us?",
+        sources: SurveyDiscoverySource.allPresets
+    )
+    SurveyFlow(flowSteps: [.discoveryQuestion(question)])
+        .environment(\.locale, Locale(identifier: "de"))
+        .dynamicTypeSize(.accessibility3)
+}
+
 
 #Preview("Mixed Content Steps") {
     SurveyFlow(

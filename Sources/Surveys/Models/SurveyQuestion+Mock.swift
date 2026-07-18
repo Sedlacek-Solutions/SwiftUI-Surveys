@@ -35,7 +35,7 @@ extension [SurveyQuestion] {
                 answers: [
                     .init(titleKey: "App Store search", systemImage: "magnifyingglass"),
                     .init(titleKey: "Social media", systemImage: "bubble.left.and.bubble.right"),
-                    .init(titleKey: "Friend or colleague", systemImage: "person.2"),
+                    .init(titleKey: "Referral", systemImage: "person.2"),
                     .init(titleKey: "Online article or blog", systemImage: "doc.text"),
                     .init(titleKey: "Podcast or video", systemImage: "play.rectangle")
                 ],

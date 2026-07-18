@@ -11,6 +11,7 @@ import SwiftUI
 public struct SurveyFlowStep: Identifiable {
     enum Storage {
         case question(SurveyQuestion)
+        case discoveryQuestion(SurveyDiscoveryQuestion)
         case content(SurveyContentStep)
         case custom(isScrollable: Bool, content: @MainActor () -> AnyView)
     }
@@ -22,6 +23,11 @@ public struct SurveyFlowStep: Identifiable {
     /// Creates a question step.
     public static func question(_ question: SurveyQuestion) -> Self {
         .init(id: question.id, storage: .question(question))
+    }
+
+    /// Creates a runtime discovery-source question step.
+    public static func discoveryQuestion(_ question: SurveyDiscoveryQuestion) -> Self {
+        .init(id: question.id, storage: .discoveryQuestion(question))
     }
 
     /// Creates a Codable content step.
@@ -54,7 +60,7 @@ extension SurveyFlowStep {
     /// The broad type of runtime step.
     public var stepType: SurveyFlowStepType {
         switch storage {
-        case .question:
+        case .question, .discoveryQuestion:
             .question
         case .content:
             .content
@@ -65,8 +71,14 @@ extension SurveyFlowStep {
 
     /// The question carried by this step, if this is a question step.
     public var question: SurveyQuestion? {
-        guard case .question(let question) = storage else { return nil }
-        return question
+        switch storage {
+        case .question(let question):
+            question
+        case .discoveryQuestion(let question):
+            question.question
+        case .content, .custom:
+            nil
+        }
     }
 
     /// The content model carried by this step, if this is a Codable content step.
@@ -82,7 +94,7 @@ extension SurveyFlowStep {
             .question(question)
         case .content(let content):
             .content(content)
-        case .custom:
+        case .discoveryQuestion, .custom:
             nil
         }
     }

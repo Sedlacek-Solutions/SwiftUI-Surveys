@@ -93,6 +93,61 @@ let questions = [
 ]
 ```
 
+### Branded Discovery-Source Questions
+
+Use `SurveyDiscoveryQuestion` for a required, single-choice “Where did you hear about us?” screen. Pass only the presets you want and keep their order under your control:
+
+```swift
+let discoveryQuestion = SurveyDiscoveryQuestion(
+    id: "discovery-source",
+    titleKey: "How did you hear about us?",
+    sources: [
+        .appStore,
+        .instagram,
+        .tiktok,
+        .youtube,
+        .referral,
+        .other
+    ]
+)
+
+SurveyFlow(
+    flowSteps: [
+        .discoveryQuestion(discoveryQuestion)
+    ],
+    onAnswer: { question, answers in
+        // Uses the same SurveyQuestion and SurveyAnswer callback as standard questions.
+        trackSource(questionID: question.id, sourceID: answers.first?.id)
+    },
+    nextStep: { step, answers in
+        let instagram = SurveyDiscoverySource.instagram.answer
+        if answers[discoveryQuestion.question]?.contains(instagram) == true {
+            return .step(id: "social-follow-up")
+        }
+        return .next
+    }
+)
+```
+
+`SurveyDiscoverySource.allPresets` contains App Store, Google, Instagram, TikTok, YouTube, Facebook, X, Reddit, Threads, LinkedIn, Product Hunt, referral, podcast, article/blog, and Other. Selecting Other reveals a required free-text field.
+
+App presets use bundled, full-color App Store artwork. Generic referral sources use SF Symbols, and selection borders and checkmarks continue to follow `surveyAccentColor`.
+
+Add an unsupported source with a stable ID, a localization key, and any SwiftUI icon:
+
+```swift
+let newsletter = SurveyDiscoverySource.custom(
+    id: "newsletter",
+    titleKey: "survey.source.newsletter"
+) {
+    Image("newsletter-mark")
+        .resizable()
+        .scaledToFit()
+}
+```
+
+Custom source titles resolve from the `textBundle` passed to `SurveyFlow`. Discovery questions are runtime-only because custom icons can contain arbitrary SwiftUI views; existing Codable `SurveyQuestion` and `SurveyStep` formats are unchanged.
+
 ### Localization Support
 
 SwiftUI-Surveys supports localization using `LocalizedStringKey`. You can provide localized strings for both questions and answers:
