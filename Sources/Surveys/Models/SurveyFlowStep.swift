@@ -9,11 +9,21 @@ import SwiftUI
 /// A runtime-only survey step that can contain arbitrary SwiftUI content.
 @MainActor
 public struct SurveyFlowStep: Identifiable {
+    enum CustomFooter {
+        case automatic
+        case hidden
+        case custom(@MainActor (SurveyFlowContinuation) -> AnyView)
+    }
+
     enum Storage {
         case question(SurveyQuestion)
         case discoveryQuestion(SurveyDiscoveryQuestion)
         case content(SurveyContentStep)
-        case custom(isScrollable: Bool, content: @MainActor () -> AnyView)
+        case custom(
+            isScrollable: Bool,
+            footer: CustomFooter,
+            content: @MainActor (SurveyFlowContinuation) -> AnyView
+        )
     }
 
     /// Stable identifier for this flow step.
@@ -45,7 +55,48 @@ public struct SurveyFlowStep: Identifiable {
             id: id,
             storage: .custom(
                 isScrollable: isScrollable,
-                content: { AnyView(content()) }
+                footer: .automatic,
+                content: { _ in AnyView(content()) }
+            )
+        )
+    }
+
+    /// Creates custom SwiftUI content that can control its survey navigation.
+    ///
+    /// Use `footer: .hidden` when the content owns all bottom actions. The default
+    /// package Continue button remains available with `footer: .automatic`.
+    public static func custom<Content: View>(
+        id: String = UUID().uuidString,
+        isScrollable: Bool = true,
+        footer: SurveyFlowStepFooter,
+        @ViewBuilder content: @escaping @MainActor (SurveyFlowContinuation) -> Content
+    ) -> Self {
+        .init(
+            id: id,
+            storage: .custom(
+                isScrollable: isScrollable,
+                footer: footer.storage,
+                content: { continuation in AnyView(content(continuation)) }
+            )
+        )
+    }
+
+    /// Creates custom SwiftUI content with an app-owned bottom section.
+    ///
+    /// The footer is placed in the flow's bottom safe-area inset and receives the
+    /// same continuation as the main content.
+    public static func custom<Content: View, Footer: View>(
+        id: String = UUID().uuidString,
+        isScrollable: Bool = true,
+        @ViewBuilder content: @escaping @MainActor (SurveyFlowContinuation) -> Content,
+        @ViewBuilder footer: @escaping @MainActor (SurveyFlowContinuation) -> Footer
+    ) -> Self {
+        .init(
+            id: id,
+            storage: .custom(
+                isScrollable: isScrollable,
+                footer: .custom { continuation in AnyView(footer(continuation)) },
+                content: { continuation in AnyView(content(continuation)) }
             )
         )
     }
@@ -53,6 +104,23 @@ public struct SurveyFlowStep: Identifiable {
     init(id: String, storage: Storage) {
         self.id = id
         self.storage = storage
+    }
+}
+
+/// Controls whether a continuation-aware custom step uses the package footer.
+public enum SurveyFlowStepFooter: Sendable {
+    /// Show the package-owned Continue button.
+    case automatic
+    /// Do not show a package-owned footer.
+    case hidden
+
+    fileprivate var storage: SurveyFlowStep.CustomFooter {
+        switch self {
+        case .automatic:
+            .automatic
+        case .hidden:
+            .hidden
+        }
     }
 }
 

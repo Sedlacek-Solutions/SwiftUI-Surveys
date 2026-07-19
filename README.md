@@ -294,6 +294,26 @@ Use `flowSteps:` for runtime-only custom SwiftUI screens. Use `steps:` for Codab
 
 By default, `.custom` wraps your content in the same scroll container as other content screens. Pass `isScrollable: false` when your custom view owns its own scrolling or fixed layout.
 
+Custom steps can replace the package Continue button with app-owned bottom content. Both builders receive a `SurveyFlowContinuation`; call `advance()` only after app-owned work succeeds:
+
+```swift
+.custom(id: "privacy") { _ in
+    PrivacyExplanationView()
+} footer: { continuation in
+    SignInWithAppleButton(.continue) { request in
+        configure(request)
+    } onCompletion: { result in
+        Task { @MainActor in
+            guard await authenticate(with: result) else { return }
+            continuation.advance()
+        }
+    }
+    .frame(height: 50)
+}
+```
+
+The custom footer stays inside the flow's bottom safe-area inset, while the package continues to own the toolbar, Back button, animated progress, and total step count. Use `continuation.goBack()` for an app-owned Back action. If a screen owns its entire layout instead of providing a bottom section, use `.custom(id: "privacy", footer: .hidden) { continuation in ... }`.
+
 ### Branching Between Steps
 
 Flows advance linearly by default. Pass `nextStep` when the next screen should depend on the submitted step or the answers collected so far:

@@ -35,21 +35,19 @@ public struct SurveyFlow {
     let textBundle: Bundle?
     @Environment(\.surveyAccentColor) private var surveyAccentColor
     @Environment(\.surveyFlowAnimation) private var surveyFlowAnimation
-    @State private var currentStepID: String
-    @State private var stepHistory: [String] = []
+    @State private var navigationState: SurveyFlowNavigationState
     @State private var answers: [SurveyQuestion: Set<SurveyAnswer>] = [:]
 
     private var currentSurveyStep: SurveyFlowStep? {
-        steps.first { $0.id == currentStepID }
+        steps.first { $0.id == navigationState.currentStepID }
     }
 
     private var currentStepIndex: Int {
-        guard let index = steps.firstIndex(where: { $0.id == currentStepID }) else { return 0 }
-        return index
+        navigationState.currentStepIndex(in: steps)
     }
 
     private var currentPathStepIDs: [String] {
-        stepHistory + [currentStepID]
+        navigationState.currentPathStepIDs
     }
 
     private var currentPathAnswers: [SurveyQuestion: Set<SurveyAnswer>] {
@@ -275,7 +273,11 @@ public struct SurveyFlow {
         self.nextStep = nextStep
         self.onAnswer = onAnswer
         self.onCompletion = onCompletion
-        self._currentStepID = State(initialValue: internalFlowSteps.first?.id ?? "")
+        self._navigationState = State(
+            initialValue: SurveyFlowNavigationState(
+                firstStepID: internalFlowSteps.first?.id ?? ""
+            )
+        )
     }
 
     private func nextAction() {
@@ -283,11 +285,23 @@ public struct SurveyFlow {
 
         switch currentSurveyStep.storage {
         case .question(let question):
-            guard let answer = answers[question] else { return }
-            onAnswer(question, answer)
+            guard answers[question] != nil else { return }
         case .discoveryQuestion(let discoveryQuestion):
-            guard let answer = answers[discoveryQuestion.question] else { return }
-            onAnswer(discoveryQuestion.question, answer)
+            guard answers[discoveryQuestion.question] != nil else { return }
+        case .content, .custom:
+            break
+        }
+
+        guard consumeCurrentPresentation() else { return }
+
+        switch currentSurveyStep.storage {
+        case .question(let question):
+            onAnswer(question, answers[question, default: []])
+        case .discoveryQuestion(let discoveryQuestion):
+            onAnswer(
+                discoveryQuestion.question,
+                answers[discoveryQuestion.question, default: []]
+            )
         case .content, .custom:
             break
         }
@@ -321,18 +335,49 @@ public struct SurveyFlow {
 
     @discardableResult
     private func navigateToStep(id: String) -> Bool {
-        guard id != currentStepID, steps.contains(where: { $0.id == id }) else { return false }
-        stepHistory.append(currentStepID)
-        currentStepID = id
-        return true
+        navigationState.move(to: id, validStepIDs: Set(steps.map(\.id)))
     }
 
     private func backAction() {
-        guard let previousStepID = stepHistory.popLast() else {
+        guard navigationState.hasPreviousStep else {
             onBack()
             return
         }
-        currentStepID = previousStepID
+        guard consumeCurrentPresentation() else { return }
+        _ = navigationState.moveBack()
+    }
+
+    private func consumeCurrentPresentation() -> Bool {
+        navigationState.consume(
+            from: navigationState.currentStepID,
+            generation: navigationState.generation
+        )
+    }
+
+    private func continuation(stepID: String, generation: Int) -> SurveyFlowContinuation {
+        SurveyFlowContinuation(
+            advance: {
+                guard navigationState.consume(from: stepID, generation: generation),
+                      let step = steps.first(where: { $0.id == stepID }) else {
+                    return
+                }
+                onFlowStepContinue(step)
+                navigate(from: step)
+            },
+            goBack: {
+                guard navigationState.isCurrent(stepID: stepID, generation: generation) else {
+                    return
+                }
+                guard navigationState.hasPreviousStep else {
+                    onBack()
+                    return
+                }
+                guard navigationState.consume(from: stepID, generation: generation) else {
+                    return
+                }
+                _ = navigationState.moveBack()
+            }
+        )
     }
 
     private func answersBinding(for question: SurveyQuestion) -> Binding<Set<SurveyAnswer>> {
@@ -386,28 +431,29 @@ extension SurveyFlow: View {
                 question: currentQuestion,
                 textBundle: textBundle,
                 answers: answersBinding(for: currentQuestion),
-                animationTrigger: currentStepID
+                animationTrigger: navigationState.currentStepID
             )
         case .discoveryQuestion(let discoveryQuestion):
             SurveyDiscoveryQuestionView(
                 question: discoveryQuestion,
                 textBundle: textBundle,
                 answers: answersBinding(for: discoveryQuestion.question),
-                animationTrigger: currentStepID
+                animationTrigger: navigationState.currentStepID
             )
         case .content(let contentStep):
             SurveyContentStepView(
                 step: contentStep,
                 textBundle: textBundle,
-                animationTrigger: currentStepID
+                animationTrigger: navigationState.currentStepID
             )
-        case .custom(let isScrollable, let content):
+        case .custom(let isScrollable, _, let content):
             customContentView(
                 isScrollable: isScrollable,
-                content: content
+                content: content,
+                continuation: currentContinuation
             )
             .surveyEntrance(
-                trigger: currentStepID,
+                trigger: navigationState.currentStepID,
                 delay: surveyFlowAnimation.titleDelay,
                 animation: surveyFlowAnimation.titleAnimation,
                 configuration: surveyFlowAnimation
@@ -420,25 +466,44 @@ extension SurveyFlow: View {
     @ViewBuilder
     private func customContentView(
         isScrollable: Bool,
-        content: @escaping @MainActor () -> AnyView
+        content: @escaping @MainActor (SurveyFlowContinuation) -> AnyView,
+        continuation: SurveyFlowContinuation
     ) -> some View {
         if isScrollable {
             ScrollView {
-                content()
+                content(continuation)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical)
             }
             .scrollIndicators(.hidden)
         } else {
-            content()
+            content(continuation)
         }
     }
 
+    @ViewBuilder
     private func actionButtons() -> some View {
-        nextButton
-            .padding(.horizontal, 20)
-            .padding(.top, 20)
-            .background(.regularMaterial)
+        switch currentSurveyStep?.storage {
+        case .custom(_, .hidden, _):
+            EmptyView()
+        case .custom(_, .custom(let footer), _):
+            footer(currentContinuation)
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                .background(.regularMaterial)
+        default:
+            nextButton
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                .background(.regularMaterial)
+        }
+    }
+
+    private var currentContinuation: SurveyFlowContinuation {
+        continuation(
+            stepID: navigationState.currentStepID,
+            generation: navigationState.generation
+        )
     }
 
     private var nextButton: some View {
